@@ -2,7 +2,6 @@ import streamlit as st
 from groq import Groq
 
 # --- API CONFIGURATION ---
-# Pulls directly from Streamlit Cloud Secrets
 GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 client = Groq(api_key=GROQ_API_KEY)
 
@@ -16,47 +15,151 @@ if "messages" not in st.session_state:
 if "is_admin" not in st.session_state:
     st.session_state.is_admin = False
 
-# --- COMPREHENSIVE CASE LIBRARY INITIALIZATION ---
+# --- COMPREHENSIVE ANONYMIZED CASE LIBRARY INITIALIZATION ---
 if "case_library" not in st.session_state:
     st.session_state.case_library = {
+        "Neck": {
+            "name": "Arthur",
+            "region_label": "Neck",
+            "demeanor": "Guarded, holds head stiffly, hesitant to turn head quickly.",
+            "chief_complaint": "Neck stiffness and radiating numbness down the left arm.",
+            "history_present_illness": "Was rear-ended at a red light 2 weeks ago; neck felt sore that night, but sharp radiating pain down the arm started 4 days ago.",
+            "location_pain": "Lower cervical spine radiating into the left shoulder blade and lateral forearm.",
+            "onset_pain": "Initial soreness 2 weeks ago, severe nerve pain 4 days ago.",
+            "type_pain": "Deep ache in neck; sharp, electric shock sensation extending into the arm.",
+            "aggravating_factors": "Looking up, turning head to the left, prolonged desk work.",
+            "easing_factors": "Resting head back against a high chair, gently supporting the left arm on a pillow.",
+            "radiation": "Radiates down C6 dermatomal distribution to the thumb and index finger.",
+            "red_flags": "Denies gait instability, denies clumsiness in hands or dropping objects frequently.",
+            "social_history": "Accountant, spends 8-10 hours a day at a computer. Non-smoker.",
+            "past_medical_history": "No prior cervical injuries or spinal conditions.",
+            "diff_dx": "C6 Cervical Radiculopathy vs. Cervical Strain / Whiplash Associated Disorder vs. Thoracic Outlet Syndrome"
+        },
+        "Shoulder": {
+            "name": "George",
+            "region_label": "Shoulder",
+            "demeanor": "Frustrated, exhausted from poor sleep, holds right arm close to body.",
+            "chief_complaint": "Deep aching right shoulder pain and weakness when lifting the arm.",
+            "history_present_illness": "Gradual onset over 5 months after painting his house ceiling; felt a sudden sharp twinge 2 weeks ago while reaching into the backseat of his car.",
+            "location_pain": "Anterolateral aspect of the right shoulder, deep to the deltoid.",
+            "onset_pain": "Gradual onset 5 months ago, acute aggravation 2 weeks ago.",
+            "type_pain": "Dull, heavy ache during the day; sharp catch when reaching overhead.",
+            "aggravating_factors": "Reaching overhead, reaching behind back to put on a belt, sleeping on the right side.",
+            "easing_factors": "Holding arm supported across stomach, heat packs, resting side-lying on the left side.",
+            "radiation": "Pain spreads down the mid-deltoid muscle belly, does not cross the elbow.",
+            "red_flags": "No unexplained weight loss, no history of cancer, no systemic night sweats.",
+            "social_history": "Retired painter, active gardener. Enjoys woodworking.",
+            "past_medical_history": "Hypertension, high cholesterol.",
+            "diff_dx": "Supraspinatus Tendinopathy / Rotator Cuff Tear vs. Subacromial Impingement vs. Adhesive Capsulitis"
+        },
+        "Elbow": {
+            "name": "David",
+            "region_label": "Elbow",
+            "demeanor": "Irritated, impatient to return to recreational activities.",
+            "chief_complaint": "Outer elbow pain and weak grip strength.",
+            "history_present_illness": "Pain started 6 weeks ago after weekend spent clearing brush with manual shears and playing pickleball.",
+            "location_pain": "Lateral epicondyle of the right elbow.",
+            "onset_pain": "Insidious onset 6 weeks ago.",
+            "type_pain": "Sharp burning sensation over lateral elbow, dull ache extending down forearm.",
+            "aggravating_factors": "Gripping a coffee mug, shaking hands, opening jar lids, backhand strokes in pickleball.",
+            "easing_factors": "Rest, ice application, avoiding heavy lifting or wringing actions.",
+            "radiation": "Extends distally down the extensor muscle belly of the forearm toward the wrist.",
+            "red_flags": "No joint locking, no swelling or redness, no warmth over the joint.",
+            "social_history": "IT consultant, recreational pickleball player 3x a week.",
+            "past_medical_history": "Mild asthma.",
+            "diff_dx": "Lateral Epicondylalgia ('Tennis Elbow') vs. Radial Tunnel Syndrome vs. Cervical Spine Referral (C6)"
+        },
+        "Hand & Wrist": {
+            "name": "Maya",
+            "region_label": "Hand & Wrist",
+            "demeanor": "Anxious, frequently shakes hands out or rubs wrists during conversation.",
+            "chief_complaint": "Tingling, numbness, and burning in the thumb and first two fingers.",
+            "history_present_illness": "Began 3 months ago with occasional night numbness; now happens daily while typing and driving.",
+            "location_pain": "Palmar aspect of wrist, thumb, index, and middle fingers.",
+            "onset_pain": "Gradual development over 3 months.",
+            "type_pain": "Prickling 'pins and needles', burning, occasional deep wrist ache.",
+            "aggravating_factors": "Holding phone for extended periods, driving, typing, sleeping with wrists curled.",
+            "easing_factors": "Shaking or flicking hands ('flick sign'), running warm water over hands, wearing temporary night splints.",
+            "radiation": "Proximal pain into forearm occasionally, but main sensory symptoms are distal in fingers.",
+            "red_flags": "No visible wasting of the thenar eminence yet, no sudden loss of hand motor function.",
+            "social_history": "Graphic designer, mother of a 14-month-old toddler.",
+            "past_medical_history": "Hypothyroidism (managed with levothyroxine), gestational diabetes during pregnancy.",
+            "diff_dx": "Carpal Tunnel Syndrome vs. Pronator Teres Syndrome vs. Cervical Radiculopathy (C6/C7)"
+        },
         "Spine": {
-            "name": "Marcus (Low Back)",
-            "demeanor": "Stoic, anxious about losing work, slightly reluctant to move.",
+            "name": "Marcus",
+            "region_label": "Spine",
+            "demeanor": "Stoic, worried about missing work, moves cautiously from sitting to standing.",
             "chief_complaint": "Lower back pain with numbness shooting down the right leg.",
             "history_present_illness": "Twisted awkwardly while lifting a heavy lumber crate 3 weeks ago; pain was immediate and worsened over 48 hours.",
-            "location_pain": "Lumbosacral region (L5/S1 area) extending into right buttock and lateral calf.",
-            "onset_pain": "Sudden onset following mechanical load 3 weeks ago.",
-            "type_pain": "Sharp, toothache-like ache in lower back; electrical/burning shooting pain down the leg.",
-            "aggravating_factors": "Bending forward, sitting for more than 15 minutes, coughing, or sneezing.",
-            "easing_factors": "Lying flat on back with knees propped up on pillows, walking short distances.",
-            "radiation": "Radiates down the posterior/lateral aspect of the right leg down to the ankle.",
+            "location_pain": "Lumbosacral region extending into right buttock and lateral calf.",
+            "onset_pain": "Sudden mechanical onset 3 weeks ago.",
+            "type_pain": "Sharp toothache-like ache in lower back; electrical burning pain down leg.",
+            "aggravating_factors": "Bending forward, sitting over 15 minutes, coughing, or sneezing.",
+            "easing_factors": "Lying flat on back with knees propped up on pillows, short slow walks.",
+            "radiation": "Radiates down posterior/lateral right leg to the lateral ankle.",
             "red_flags": "Denies bowel or bladder incontinence, denies saddle anesthesia (numbness in groin).",
-            "social_history": "Works full-time as a construction foreman. Sole provider for family of four. Non-smoker.",
-            "past_medical_history": "Mild hypertension (managed with diet), no prior back operations or severe injury history.",
+            "social_history": "Construction foreman, sole earner for household. Non-smoker.",
+            "past_medical_history": "Mild hypertension.",
             "diff_dx": "L5/S1 Lumbar Disc Herniation with Radiculopathy vs. Piriformis Syndrome vs. Lumbar Facet Arthropathy"
         },
+        "Hip": {
+            "name": "Rachel",
+            "region_label": "Hip",
+            "demeanor": "Polite, limping slightly when walking into the room, rubs groin area when describing pain.",
+            "chief_complaint": "Deep groin stiffness and difficulty tying shoes or putting on socks.",
+            "history_present_illness": "Aching groinal stiffness has developed progressively over the past year; worsening stiffness in the morning.",
+            "location_pain": "Anterior groin and deep anterior hip, occasionally spreading to anterior thigh.",
+            "onset_pain": "Insidious progressive onset over 12 months.",
+            "type_pain": "Dull, deep grinding ache and morning stiffness.",
+            "aggravating_factors": "Weight-bearing after prolonged sitting, squatting, getting out of a car, putting on socks/shoes.",
+            "easing_factors": "Gentle movement after warming up, warm showers, sitting in reclining chairs.",
+            "radiation": "Refers down the anterior thigh toward the superior pole of the patella.",
+            "red_flags": "No unexplained fevers, no night pain waking her up every night, no history of systemic corticosteroid use.",
+            "social_history": "High school history teacher, avid walker.",
+            "past_medical_history": "Post-menopausal, mild osteopenia.",
+            "diff_dx": "Hip Osteoarthritis vs. Femoroacetabular Impingement (FAI) vs. Lumbar Spine L3 Referral"
+        },
         "Knee": {
-            "name": "Elena (ACL)",
-            "demeanor": "Emotional, highly anxious about her athletic scholarship, tearful when discussing sports.",
-            "chief_complaint": "Left knee pain, severe instability, and swelling after pivoting.",
-            "history_present_illness": "Pivoted quickly during a soccer match yesterday, felt/heard a loud 'pop' followed by immediate instability.",
-            "location_pain": "Deep intra-articular left knee joint pain.",
-            "onset_pain": "Acute onset 24 hours ago.",
-            "type_pain": "Throbbing, deep ache with sharp pain upon weight-bearing attempts.",
+            "name": "Elena",
+            "region_label": "Knee",
+            "demeanor": "Emotional, highly anxious about her athletic season, visibly guarding her left leg.",
+            "chief_complaint": "Left knee pain, instability, and feeling of the joint 'giving way'.",
+            "history_present_illness": "Pivoted quickly during a match yesterday, felt/heard a loud 'pop' followed by immediate instability.",
+            "location_pain": "Deep inside the left knee joint.",
+            "onset_pain": "Acute traumatic onset 24 hours ago.",
+            "type_pain": "Throbbing, deep ache with sharp catch upon weight-bearing attempts.",
             "aggravating_factors": "Bearing weight, twisting, attempting full extension or flexion.",
-            "easing_factors": "Ice, elevation, complete rest, non-weight-bearing.",
-            "radiation": "No distal radiation; localized around the anterior and medial joint line.",
-            "red_flags": "No fever, no loss of sensation in foot, pedal pulses strong.",
-            "social_history": "Division 1 university soccer athlete, second-year kinesiology student.",
-            "past_medical_history": "Right ankle inversion sprain 2 years ago (fully recovered).",
+            "easing_factors": "Ice, elevation, complete rest, non-weight-bearing with crutches.",
+            "radiation": "Localized to joint line, no distal radiation.",
+            "red_flags": "No fever, pedal pulses present and equal, sensation intact distally.",
+            "social_history": "University soccer athlete.",
+            "past_medical_history": "Prior right ankle sprain 2 years ago.",
             "diff_dx": "Acute ACL Tear vs. Medial Meniscus Tear vs. Patellar Subluxation"
+        },
+        "Ankle & Foot": {
+            "name": "Lucas",
+            "region_label": "Ankle & Foot",
+            "demeanor": "Frustrated, wincing during first few steps when getting up.",
+            "chief_complaint": "Sharp heel pain when taking the first steps out of bed in the morning.",
+            "history_present_illness": "Pain began 2 months ago after starting a new running program on pavement; initial steps every morning are agonizing.",
+            "location_pain": "Plantar aspect of the heel, near the medial calcaneal tubercle.",
+            "onset_pain": "Gradual onset over 8 weeks.",
+            "type_pain": "Sharp stabbing pain initially, turns into a dull ache after walking for 10 minutes.",
+            "aggravating_factors": "First steps in morning, standing after sitting, bare-foot walking on hard floors, running.",
+            "easing_factors": "Moderate walking once warmed up, supportive arch footwear, rolling foot on a frozen water bottle.",
+            "radiation": "Spreads slightly forward into the medial longitudinal arch.",
+            "red_flags": "No calf swelling, no calf tenderness on palpation, no localized skin changes or warmth.",
+            "social_history": "Store manager, stands 8 hours daily on concrete floors. Started marathon training.",
+            "past_medical_history": "Overweight (BMI 28).",
+            "diff_dx": "Plantar Fasciopathy ('Plantar Fasciitis') vs. Calcaneal Stress Fracture vs. Fat Pad Atrophy vs. Tarsal Tunnel Syndrome"
         }
     }
 
 # --- HELPER FUNCTION: COMPILE AI INSTRUCTIONS ---
 def build_patient_instructions(c):
     return (
-        f"You are a standardized patient named {c['name']} in a clinical simulation for medical students.\n"
+        f"You are a standardized patient named {c['name']} in a clinical simulation for medical/physiotherapy students.\n"
         f"PATIENT DEMEANOR: {c['demeanor']}\n"
         f"CHIEF COMPLAINT: {c['chief_complaint']}\n"
         f"HISTORY OF PRESENT ILLNESS: {c['history_present_illness']}\n"
@@ -71,8 +174,8 @@ def build_patient_instructions(c):
         f"PAST MEDICAL HISTORY: {c['past_medical_history']}\n\n"
         f"INSTRUCTIONS FOR CHAT:\n"
         f"- Stay in character as {c['name']} at all times.\n"
+        f"- DO NOT reveal your diagnosis or explicit medical anatomical terms (like 'L5/S1' or 'ACL') unless describing what a previous doctor told you.\n"
         f"- Only reveal information if the student asks relevant clinical questions.\n"
-        f"- Do not diagnose yourself or use overly complex medical terminology.\n"
         f"- Be concise and realistic in your conversational responses."
     )
 
@@ -129,20 +232,27 @@ if st.sidebar.button("Terminate Session (Logout)"):
 # --- STAGE 3: ADMIN CASE EDITOR PAGE ---
 if role == "Admin/Instructor Editor":
     st.title("🛠️ Admin Case Management Matrix")
-    st.write("Edit case attributes below. Modifications will take effect live for students.")
+    st.write("Edit case attributes below. Modifications take effect live for students.")
     
-    selected_joint = st.selectbox("Select Case to Customize:", list(st.session_state.case_library.keys()))
-    case_data = st.session_state.case_library[selected_joint]
+    # Format options for Admin to show region label
+    case_keys = list(st.session_state.case_library.keys())
+    selected_key = st.selectbox(
+        "Select Case to Customize (Faculty Region View):", 
+        case_keys, 
+        format_func=lambda k: f"{st.session_state.case_library[k]['name']} — [{st.session_state.case_library[k]['region_label']}]"
+    )
+    
+    case_data = st.session_state.case_library[selected_key]
     
     st.markdown("---")
     
     # 13 Granular Case Categories
     with st.form("admin_case_form"):
-        st.subheader(f"Editing Case: {case_data['name']}")
+        st.subheader(f"Editing Case: {case_data['name']} ({case_data['region_label']})")
         
         col1, col2 = st.columns(2)
         with col1:
-            e_name = st.text_input("Patient Identifier Name", value=case_data.get("name", ""))
+            e_name = st.text_input("Patient Identifier Name (Visible to Students)", value=case_data.get("name", ""))
             e_demeanor = st.text_input("Patient Demeanor", value=case_data.get("demeanor", ""))
             e_chief = st.text_area("Chief Complaint", value=case_data.get("chief_complaint", ""))
             e_hpi = st.text_area("History of Presenting Illness (HPI)", value=case_data.get("history_present_illness", ""))
@@ -162,7 +272,7 @@ if role == "Admin/Instructor Editor":
         save_submitted = st.form_submit_button("Save Case Updates Live", type="primary")
         
         if save_submitted:
-            st.session_state.case_library[selected_joint] = {
+            st.session_state.case_library[selected_key].update({
                 "name": e_name,
                 "demeanor": e_demeanor,
                 "chief_complaint": e_chief,
@@ -177,23 +287,30 @@ if role == "Admin/Instructor Editor":
                 "social_history": e_soc,
                 "past_medical_history": e_pmh,
                 "diff_dx": e_diff
-            }
+            })
             st.success(f"Case details for '{e_name}' successfully updated!")
 
 # --- STAGE 4: STUDENT CLINICAL SIMULATOR PAGE ---
 else:
     st.title("🎓 Interactive Clinical Assessment")
-    st.write("Interview your standardized patient. Ask structured questions regarding their pain presentation, medical background, and lifestyle factors.")
+    st.write("Interview your assigned patient. Ask structured clinical questions regarding their pain presentation, functional limitations, medical background, and lifestyle factors.")
     
-    chosen_domain = st.selectbox("Assign Patient Structural Case Focus:", list(st.session_state.case_library.keys()))
-    active_case = st.session_state.case_library[chosen_domain]
+    # Dropdown displays ONLY the patient names to students
+    case_keys = list(st.session_state.case_library.keys())
+    chosen_key = st.selectbox(
+        "Select Patient for Evaluation:", 
+        case_keys,
+        format_func=lambda k: f"Patient: {st.session_state.case_library[k]['name']}"
+    )
+    
+    active_case = st.session_state.case_library[chosen_key]
     
     # Clear conversation history if switching cases
-    if "last_chosen_case" not in st.session_state or st.session_state.last_chosen_case != chosen_domain:
+    if "last_chosen_case" not in st.session_state or st.session_state.last_chosen_case != chosen_key:
         st.session_state.messages = []
-        st.session_state.last_chosen_case = chosen_domain
+        st.session_state.last_chosen_case = chosen_key
 
-    st.info(f"📋 **Current Active Case:** {active_case['name']}")
+    st.info(f"📋 **Current Active Case:** Patient {active_case['name']}")
     
     # Display Chat Messages
     for msg in st.session_state.messages:
@@ -238,7 +355,6 @@ else:
             export_string += f"OFFICIAL MSK CLINICAL SIMULATION EVALUATION RECORD\n"
             export_string += f"==================================================\n"
             export_string += f"Student CCID: {st.session_state.ccid}\n"
-            export_string += f"Case Domain: {chosen_domain}\n"
             export_string += f"Patient Name: {active_case['name']}\n"
             export_string += f"--------------------------------------------------\n\n"
             
@@ -249,6 +365,6 @@ else:
             st.sidebar.download_button(
                 label="📥 Download Transcript (.txt)",
                 data=export_string,
-                file_name=f"MSK_Assessment_{st.session_state.ccid}_{chosen_domain}.txt",
+                file_name=f"MSK_Assessment_{st.session_state.ccid}_Patient_{active_case['name']}.txt",
                 mime="text/plain"
             )
