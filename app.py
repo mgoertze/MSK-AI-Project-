@@ -293,7 +293,7 @@ if role == "Admin/Instructor Editor":
 # --- STAGE 4: STUDENT CLINICAL SIMULATOR PAGE ---
 else:
     st.title("🎓 Interactive Clinical Assessment")
-    st.write("Interview your assigned patient. Ask structured clinical questions regarding their pain presentation, functional limitations, medical background, and lifestyle factors.")
+    st.write("Complete a subjective history on the assigned patient. When you believe you have completed your history type \"Differential diagnosis:__________.\" Compile your transcript and send it to your instructor.")
     
     # Dropdown displays ONLY the patient names to students
     case_keys = list(st.session_state.case_library.keys())
