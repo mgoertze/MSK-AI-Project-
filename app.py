@@ -10,10 +10,10 @@ client = Groq(api_key=GROQ_API_KEY)
 MODEL_NAME = "llama-3.1-8b-instant"
 DATA_FILE = "cases.json"
 
-# --- DEFAULT 48-CASE ANONYMIZED CLINICAL LIBRARY ---
+# --- DEFAULT 48-CASE ANONYMIZED CLINICAL LIBRARY (DIAGNOSES HIDDEN) ---
 DEFAULT_CASE_LIBRARY = {
     "Cervical spine": {
-        "Case 1: Mechanical Neck Pain (Postural Strain)": {
+        "Case 1": {
             "name": "Arthur", "region_label": "Cervical spine", "forthcomingness": 3,
             "demeanor": "Rubbing neck, sits slouched forward.",
             "chief_complaint": "Persistent ache across upper back and neck after long hours at computer.",
@@ -27,9 +27,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Denies upper extremity numbness, weakness, or clumsiness.",
             "social_history": "Software developer, works 10-hour days.",
             "past_medical_history": "None.",
-            "diff_dx": "Mechanical Neck Pain (Postural Strain) vs. Cervical Facet Arthropathy vs. Tension Headache"
+            "diff_dx": "Mechanical Neck Pain (Postural Strain)"
         },
-        "Case 2: Mechanical Neck Pain (Facet Dysfunction)": {
+        "Case 2": {
             "name": "Beatrice", "region_label": "Cervical spine", "forthcomingness": 3,
             "demeanor": "Holds head slightly turned, hesitant to rotate quickly.",
             "chief_complaint": "Sharp catching pain when looking over right shoulder while driving.",
@@ -43,9 +43,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Neurological examination completely clear.",
             "social_history": "Graphic artist.",
             "past_medical_history": "None.",
-            "diff_dx": "Mechanical Neck Pain (Facet Dysfunction) vs. Cervical Radiculopathy vs. Levator Scapulae Strain"
+            "diff_dx": "Mechanical Neck Pain (Facet Dysfunction)"
         },
-        "Case 3: Mechanical Neck Pain (Discogenic Non-Radicular)": {
+        "Case 3": {
             "name": "Charles", "region_label": "Cervical spine", "forthcomingness": 3,
             "demeanor": "Sits very upright, cautious with cervical flexion.",
             "chief_complaint": "Deep central neck ache that worsens when looking down at phone.",
@@ -59,9 +59,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No arm numbness or hand weakness.",
             "social_history": "Warehouse manager.",
             "past_medical_history": "Lumbar strain 5 years ago.",
-            "diff_dx": "Mechanical Neck Pain (Discogenic Non-Radicular) vs. Cervical Radiculopathy vs. Thoracic Outlet Syndrome"
+            "diff_dx": "Mechanical Neck Pain (Discogenic Non-Radicular)"
         },
-        "Case 4: Cervical Radiculopathy": {
+        "Case 4": {
             "name": "Diana", "region_label": "Cervical spine", "forthcomingness": 3,
             "demeanor": "Holding arm on top of head for pain relief.",
             "chief_complaint": "Sharp shooting electric pain down left arm into thumb and index finger.",
@@ -75,9 +75,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Mild weakness in biceps / wrist extension; no gait ataxia.",
             "social_history": "Accountant.",
             "past_medical_history": "Hypertension.",
-            "diff_dx": "Cervical Radiculopathy vs. Carpal Tunnel Syndrome vs. Thoracic Outlet Syndrome"
+            "diff_dx": "Cervical Radiculopathy"
         },
-        "Case 5: Transverse Ligament Instability": {
+        "Case 5": {
             "name": "Ethan", "region_label": "Cervical spine", "forthcomingness": 2,
             "demeanor": "Anxious, manually supporting chin with hand.",
             "chief_complaint": "Feeling like head is 'heavy and unstable' with paresthesia in lip and hands upon bending neck forward.",
@@ -91,9 +91,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Lhermitte sign positive; perioral numbness present on flexion.",
             "social_history": "College student.",
             "past_medical_history": "Rheumatoid Arthritis.",
-            "diff_dx": "Transverse Ligament Instability vs. Cervical Myelopathy vs. Odontoid Fracture"
+            "diff_dx": "Transverse Ligament Instability"
         },
-        "Case 6: Cervical Myelopathy": {
+        "Case 6": {
             "name": "Fiona", "region_label": "Cervical spine", "forthcomingness": 2,
             "demeanor": "Elderly, cautious wide-based gait, clumsy holding pen.",
             "chief_complaint": "Progressive hand clumsiness, difficulty buttoning shirts, and feeling off-balance when walking.",
@@ -107,11 +107,11 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Positive Hoffmann sign, gait ataxia, Babinski positive.",
             "social_history": "Retired school teacher.",
             "past_medical_history": "Cervical spondylosis.",
-            "diff_dx": "Cervical Myelopathy vs. Amyotrophic Lateral Sclerosis vs. Bilateral C7 Radiculopathy"
+            "diff_dx": "Cervical Myelopathy"
         }
     },
     "Lumbar spine": {
-        "Case 1: Mechanical Low Back Pain (Lumbar Strain)": {
+        "Case 1": {
             "name": "George", "region_label": "Lumbar spine", "forthcomingness": 4,
             "demeanor": "Moving slowly, holding lower back with both hands.",
             "chief_complaint": "Acute lower back muscle spasm after lifting heavy garden soil.",
@@ -125,9 +125,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Normal leg strength, normal reflex exam.",
             "social_history": "Landscape designer.",
             "past_medical_history": "None.",
-            "diff_dx": "Mechanical Low Back Pain (Lumbar Strain) vs. Lumbar Disc Herniation vs. Facet Joint Sprain"
+            "diff_dx": "Mechanical Low Back Pain (Lumbar Strain)"
         },
-        "Case 2: Mechanical Low Back Pain (Facet Arthropathy)": {
+        "Case 2": {
             "name": "Hannah", "region_label": "Lumbar spine", "forthcomingness": 3,
             "demeanor": "Stands slightly stooped forward to avoid extension.",
             "chief_complaint": "Dull ache in low back worse when standing straight or arching back.",
@@ -141,9 +141,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No neurological deficits down legs.",
             "social_history": "Retired administrative clerk.",
             "past_medical_history": "Lumbar osteoarthritis.",
-            "diff_dx": "Mechanical Low Back Pain (Facet Arthropathy) vs. Lumbar Spinal Stenosis vs. Sacroiliac Joint Dysfunction"
+            "diff_dx": "Mechanical Low Back Pain (Facet Arthropathy)"
         },
-        "Case 3: Mechanical Low Back Pain (Discogenic)": {
+        "Case 3": {
             "name": "Ian", "region_label": "Lumbar spine", "forthcomingness": 3,
             "demeanor": "Prefers standing during interview; sitting causes groans.",
             "chief_complaint": "Deep central low back pain made agonizing by prolonged sitting.",
@@ -157,9 +157,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Straight leg raise negative for true radicular leg pain.",
             "social_history": "Office worker.",
             "past_medical_history": "None.",
-            "diff_dx": "Mechanical Low Back Pain (Discogenic) vs. Lumbar Radiculopathy vs. Sacroiliac Joint Strain"
+            "diff_dx": "Mechanical Low Back Pain (Discogenic)"
         },
-        "Case 4: Neurogenic Claudication / Lateral Foraminal Stenosis": {
+        "Case 4": {
             "name": "Julia", "region_label": "Lumbar spine", "forthcomingness": 4,
             "demeanor": "Elderly, leaning forward over a walking frame.",
             "chief_complaint": "Bilateral leg aching and heaviness that forces sitting down after walking 5 minutes.",
@@ -173,9 +173,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Pedal pulses strong; no bowel or bladder changes.",
             "social_history": "Retired librarian.",
             "past_medical_history": "Spinal stenosis.",
-            "diff_dx": "Neurogenic Claudication / Lateral Foraminal Stenosis vs. Vascular Claudication vs. Lumbar Disc Herniation"
+            "diff_dx": "Neurogenic Claudication / Lateral Foraminal Stenosis"
         },
-        "Case 5: Radiculopathy": {
+        "Case 5": {
             "name": "Kevin", "region_label": "Lumbar spine", "forthcomingness": 3,
             "demeanor": "Anxious, guarding right leg.",
             "chief_complaint": "Sharp burning pain shooting down back of right leg to top of foot.",
@@ -189,9 +189,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Dorsiflexion weakness (great toe extension 4/5); no bowel/bladder dysfunction.",
             "social_history": "Personal trainer.",
             "past_medical_history": "None.",
-            "diff_dx": "Radiculopathy vs. Piriformis Syndrome vs. Hamstring Strain"
+            "diff_dx": "Radiculopathy"
         },
-        "Case 6: Cauda Equina Syndrome": {
+        "Case 6": {
             "name": "Laura", "region_label": "Lumbar spine", "forthcomingness": 2,
             "demeanor": "Distressed, tearful, unable to sit comfortably.",
             "chief_complaint": "Sudden bilateral leg weakness, groin numbness, and loss of bowel/bladder control.",
@@ -205,11 +205,11 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Saddle anesthesia, urinary retention/incontinence, bilateral leg foot drop.",
             "social_history": "Teacher.",
             "past_medical_history": "Lumbar disc herniation.",
-            "diff_dx": "Cauda Equina Syndrome vs. Massive Lumbar Disc Herniation vs. Spinal Cord Compression"
+            "diff_dx": "Cauda Equina Syndrome"
         }
     },
     "Shoulder": {
-        "Case 1: Rotator Cuff Related Pain Syndrome": {
+        "Case 1": {
             "name": "Maya", "region_label": "Shoulder", "forthcomingness": 3,
             "demeanor": "Holding shoulder, wincing when lifting arm.",
             "chief_complaint": "Anterolateral shoulder pain when reaching overhead or taking off sweater.",
@@ -223,9 +223,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No sudden total loss of muscle strength.",
             "social_history": "Painter, handyman.",
             "past_medical_history": "None.",
-            "diff_dx": "Rotator Cuff Related Pain Syndrome vs. Adhesive Capsulitis vs. Cervical Spine Referral"
+            "diff_dx": "Rotator Cuff Related Pain Syndrome"
         },
-        "Case 2: Massive Rotator Cuff Rupture": {
+        "Case 2": {
             "name": "Nora", "region_label": "Shoulder", "forthcomingness": 3,
             "demeanor": "Elderly, arm hanging limp at side, unable to lift arm against gravity.",
             "chief_complaint": "Inability to raise right arm after falling onto shoulder 2 weeks ago.",
@@ -239,9 +239,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Positive drop arm test; complete inability to hold arm abducted.",
             "social_history": "Retired gardener.",
             "past_medical_history": "Chronic shoulder impingement.",
-            "diff_dx": "Massive Rotator Cuff Rupture vs. Axillary Nerve Palsy vs. Glenohumeral Dislocation"
+            "diff_dx": "Massive Rotator Cuff Rupture"
         },
-        "Case 3: Adhesive Capsulitis": {
+        "Case 3": {
             "name": "Oliver", "region_label": "Shoulder", "forthcomingness": 3,
             "demeanor": "Holding arm pinned tightly against ribs.",
             "chief_complaint": "Severe global stiffness with loss of both active and passive shoulder movement.",
@@ -255,9 +255,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Profound loss of passive external rotation.",
             "social_history": "Executive.",
             "past_medical_history": "Type II Diabetes Mellitus.",
-            "diff_dx": "Adhesive Capsulitis vs. Glenohumeral Osteoarthritis vs. Rotator Cuff Tear"
+            "diff_dx": "Adhesive Capsulitis"
         },
-        "Case 4: Anterior Instability": {
+        "Case 4": {
             "name": "Penelope", "region_label": "Shoulder", "forthcomingness": 4,
             "demeanor": "Young, hesitant to let doctor move arm into high-five position.",
             "chief_complaint": "Feeling that shoulder is going to 'pop out' when throwing or reaching overhead.",
@@ -271,9 +271,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Positive apprehension test; axillary nerve intact.",
             "social_history": "Rugby player.",
             "past_medical_history": "Anterior dislocation 6 months ago.",
-            "diff_dx": "Anterior Instability vs. SLAP Tear vs. AC Joint Sprain"
+            "diff_dx": "Anterior Instability"
         },
-        "Case 5: Frozen Shoulder": {
+        "Case 5": {
             "name": "Quentin", "region_label": "Shoulder", "forthcomingness": 3,
             "demeanor": "Guarded, holding shoulder still.",
             "chief_complaint": "Aching shoulder pain with restriction in reaching up into cupboards.",
@@ -287,9 +287,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Passive motion restricted in all planes.",
             "social_history": "Teacher.",
             "past_medical_history": "Hypothyroidism.",
-            "diff_dx": "Frozen Shoulder vs. Rotator Cuff Related Pain Syndrome vs. Biceps Tendinopathy"
+            "diff_dx": "Frozen Shoulder"
         },
-        "Case 6: AC Joint Sprain": {
+        "Case 6": {
             "name": "Rosa", "region_label": "Shoulder", "forthcomingness": 3,
             "demeanor": "Pointing directly to top bump on shoulder.",
             "chief_complaint": "Sharp pain on the very top of shoulder after landing directly on it during cycling crash.",
@@ -303,11 +303,11 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Skin intact over bump; neurovascular exam normal distally.",
             "social_history": "Cyclist.",
             "past_medical_history": "None.",
-            "diff_dx": "AC Joint Sprain vs. Clavicle Fracture vs. Subacromial Bursitis"
+            "diff_dx": "AC Joint Sprain"
         }
     },
     "Elbow": {
-        "Case 1: Medial Epicondylosis": {
+        "Case 1": {
             "name": "Samuel", "region_label": "Elbow", "forthcomingness": 4,
             "demeanor": "Holding inner elbow knob.",
             "chief_complaint": "Inner elbow pain when flexing wrist or gripping objects tightly.",
@@ -321,9 +321,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No ulnar nerve numbness in 4th/5th digits.",
             "social_history": "Golfer, carpenter.",
             "past_medical_history": "None.",
-            "diff_dx": "Medial Epicondylosis vs. Cubital Tunnel Syndrome vs. UCL Sprain"
+            "diff_dx": "Medial Epicondylosis"
         },
-        "Case 2: Lateral Epicondylosis": {
+        "Case 2": {
             "name": "Tina", "region_label": "Elbow", "forthcomingness": 3,
             "demeanor": "Wincing when picking up coffee cup.",
             "chief_complaint": "Outer elbow pain and weak grip strength.",
@@ -337,9 +337,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Joint range of motion fully intact.",
             "social_history": "IT specialist, tennis player.",
             "past_medical_history": "None.",
-            "diff_dx": "Lateral Epicondylosis vs. Radial Tunnel Syndrome vs. C6 Cervical Radiculopathy"
+            "diff_dx": "Lateral Epicondylosis"
         },
-        "Case 3: UCL Sprain": {
+        "Case 3": {
             "name": "Victor", "region_label": "Elbow", "forthcomingness": 3,
             "demeanor": "Young baseball player, rubbing inner elbow crease.",
             "chief_complaint": "Inner elbow pain and popping feeling during acceleration phase of pitch.",
@@ -353,9 +353,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Valgus stress test reveals increased laxity.",
             "social_history": "College baseball pitcher.",
             "past_medical_history": "Medial elbow soreness 1 year ago.",
-            "diff_dx": "UCL Sprain vs. Medial Epicondylosis vs. Flexor-Pronator Strain"
+            "diff_dx": "UCL Sprain"
         },
-        "Case 4: Olecranon Bursitis": {
+        "Case 4": {
             "name": "Wendy", "region_label": "Elbow", "forthcomingness": 4,
             "demeanor": "Pointing to large fluid-filled sac at tip of elbow.",
             "chief_complaint": "Large, goose-egg shaped fluid swelling on the tip of the elbow.",
@@ -369,9 +369,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No fever, no skin redness or warmth (aseptic).",
             "social_history": "Office worker.",
             "past_medical_history": "Gout.",
-            "diff_dx": "Olecranon Bursitis (Aseptic) vs. Septic Bursitis vs. Rheumatoid Nodule"
+            "diff_dx": "Olecranon Bursitis"
         },
-        "Case 5: Distal Biceps Rupture": {
+        "Case 5": {
             "name": "Xavier", "region_label": "Elbow", "forthcomingness": 2,
             "demeanor": "Guarding elbow flexed at 90 degrees, visible bruising in crease.",
             "chief_complaint": "Sudden pop in elbow crease while lifting heavy motor, followed by weak arm curling.",
@@ -385,9 +385,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Positive hook test (distal tendon cord non-palpable); ecchymosis.",
             "social_history": "Mechanic.",
             "past_medical_history": "None.",
-            "diff_dx": "Distal Biceps Rupture vs. Brachialis Muscle Strain vs. Antecubital Hematoma"
+            "diff_dx": "Distal Biceps Rupture"
         },
-        "Case 6: Osteoarthritis": {
+        "Case 6": {
             "name": "Yasmine", "region_label": "Elbow", "forthcomingness": 3,
             "demeanor": "Older manual laborer, elbow stuck in partial flexion.",
             "chief_complaint": "Deep elbow joint ache and inability to fully straighten or bend elbow.",
@@ -401,11 +401,11 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Loss of end-range extension and flexion.",
             "social_history": "Retired jackhammer operator.",
             "past_medical_history": "Systemic OA.",
-            "diff_dx": "Elbow Osteoarthritis vs. Intra-articular Loose Body vs. Posterior Impingement"
+            "diff_dx": "Osteoarthritis"
         }
     },
     "Wrist and hand": {
-        "Case 1: De-Quervains": {
+        "Case 1": {
             "name": "Zachary", "region_label": "Wrist and hand", "forthcomingness": 4,
             "demeanor": "Holding thumb-side of wrist, cradling hand.",
             "chief_complaint": "Sharp wrist pain on the thumb side when picking up baby or wringing towels.",
@@ -419,9 +419,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No nerve tingling in fingers.",
             "social_history": "New mother.",
             "past_medical_history": "None.",
-            "diff_dx": "De-Quervains Tenosynovitis vs. Scaphoid Fracture vs. 1st CMC Osteoarthritis"
+            "diff_dx": "De-Quervains"
         },
-        "Case 2: Jersey Finger": {
+        "Case 2": {
             "name": "Abigail", "region_label": "Wrist and hand", "forthcomingness": 3,
             "demeanor": "Holding ring finger straight, unable to bend tip.",
             "chief_complaint": "Inability to bend the tip of the ring finger after tackling player in football.",
@@ -435,9 +435,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "FDP tendon retraction; finger remains extended at DIP in resting cascade.",
             "social_history": "Football player.",
             "past_medical_history": "None.",
-            "diff_dx": "Jersey Finger (FDP Avulsion) vs. DIP Joint Sprain vs. Mallet Finger"
+            "diff_dx": "Jersey Finger"
         },
-        "Case 3: Trigger Finger": {
+        "Case 3": {
             "name": "Benjamin", "region_label": "Wrist and hand", "forthcomingness": 3,
             "demeanor": "Demonstrating middle finger popping open with opposite hand.",
             "chief_complaint": "Middle finger catches in palm when flexing and pops open painfully.",
@@ -451,9 +451,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Tender nodule palpable over A1 pulley.",
             "social_history": "Gardener.",
             "past_medical_history": "Diabetes Mellitus.",
-            "diff_dx": "Trigger Finger vs. Flexor Tendon Laceration vs. Dupuytren Contracture"
+            "diff_dx": "Trigger Finger"
         },
-        "Case 4: TFCC Pathology": {
+        "Case 4": {
             "name": "Chloe", "region_label": "Wrist and hand", "forthcomingness": 3,
             "demeanor": "Holding pinky side of wrist.",
             "chief_complaint": "Ulnar-sided wrist pain and clicking when pushing up from a chair.",
@@ -467,9 +467,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Positive TFCC compression test; DRUJ stability intact.",
             "social_history": "Gymnast.",
             "past_medical_history": "None.",
-            "diff_dx": "TFCC Pathology vs. ECU Tendinopathy vs. Ulnar Styloid Fracture"
+            "diff_dx": "TFCC Pathology"
         },
-        "Case 5: Thumb UCL": {
+        "Case 5": {
             "name": "Daniel", "region_label": "Wrist and hand", "forthcomingness": 3,
             "demeanor": "Holding base of thumb with ice pack.",
             "chief_complaint": "Weak pinch grip and sharp pain at inner base of thumb after ski pole fell out of hand.",
@@ -480,12 +480,12 @@ DEFAULT_CASE_LIBRARY = {
             "aggravating_factors": "Pinching paper, opening door handles, twisting keys.",
             "easing_factors": "Immobilizing thumb in spica.",
             "radiation": "None.",
-            "red_flags": "Valgus stress testing shows significant joint opening (Gamekeeper / Skier Thumb).",
+            "red_flags": "Valgus stress testing shows significant joint opening.",
             "social_history": "Skier.",
             "past_medical_history": "None.",
-            "diff_dx": "Thumb UCL Sprain ('Skier Thumb') vs. 1st MCP Fracture vs. Radial Collateral Ligament Sprain"
+            "diff_dx": "Thumb UCL"
         },
-        "Case 6: Scaphoid Fracture": {
+        "Case 6": {
             "name": "Emily", "region_label": "Wrist and hand", "forthcomingness": 2,
             "demeanor": "Wearing elastic wrist wrap, cautious of thumb movement.",
             "chief_complaint": "Deep wrist ache in anatomical snuffbox after falling on outstretched hand 1 week ago.",
@@ -499,11 +499,11 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Focal point tenderness over scaphoid in anatomical snuffbox.",
             "social_history": "Snowboarder.",
             "past_medical_history": "None.",
-            "diff_dx": "Scaphoid Fracture vs. Wrist Sprain vs. Radial Styloid Fracture"
+            "diff_dx": "Scaphoid Fracture"
         }
     },
     "Hip": {
-        "Case 1: Proximal Hamstring Tendinopathy": {
+        "Case 1": {
             "name": "Frank", "region_label": "Hip", "forthcomingness": 3,
             "demeanor": "Sits on edge of chair / cushion to avoid sitting on ischial tuberosity.",
             "chief_complaint": "Deep buttock pain right over sit-bone when sitting long hours or running hills.",
@@ -517,9 +517,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Lumbar spine screen normal; sciatic nerve conduction clear.",
             "social_history": "Marathon runner, accountant.",
             "past_medical_history": "None.",
-            "diff_dx": "Proximal Hamstring Tendinopathy vs. Ischiogluteal Bursitis vs. Sciatic Nerve Entrapment"
+            "diff_dx": "Proximal Hamstring Tendinopathy"
         },
-        "Case 2: Athletic Pubalgia": {
+        "Case 2": {
             "name": "Grace", "region_label": "Hip", "forthcomingness": 3,
             "demeanor": "Holding lower abdomen / inner groin.",
             "chief_complaint": "Sharp lower abdominal and inner groin pain during twisting and kicking.",
@@ -533,9 +533,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No palpable hernia sac or abdominal wall defect.",
             "social_history": "Soccer player.",
             "past_medical_history": "None.",
-            "diff_dx": "Athletic Pubalgia ('Sports Hernia') vs. Adductor Longus Strain vs. Osteitis Pubis"
+            "diff_dx": "Athletic Pubalgia"
         },
-        "Case 3: Greater Trochanteric Pain Syndrome": {
+        "Case 3": {
             "name": "Henry", "region_label": "Hip", "forthcomingness": 4,
             "demeanor": "Touching lateral aspect of outer hip bone.",
             "chief_complaint": "Outer hip pain when lying on affected side at night and walking up stairs.",
@@ -549,9 +549,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Hip joint internal rotation is smooth and painless.",
             "social_history": "Walker, teacher.",
             "past_medical_history": "None.",
-            "diff_dx": "Greater Trochanteric Pain Syndrome vs. IT Band Syndrome vs. L4 Radiculopathy"
+            "diff_dx": "Greater Trochanteric Pain Syndrome"
         },
-        "Case 4: FAI": {
+        "Case 4": {
             "name": "Isabel", "region_label": "Hip", "forthcomingness": 3,
             "demeanor": "Making a 'C-shape' with hand around anterior/lateral hip.",
             "chief_complaint": "Sharp pinch in deep groin when squatting or getting out of car.",
@@ -565,9 +565,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "FADIR test positive (reproduces deep groin pain).",
             "social_history": "Crossfit athlete.",
             "past_medical_history": "Cam morphology on prior X-ray.",
-            "diff_dx": "FAI (Femoroacetabular Impingement) vs. Acetabular Labral Tear vs. Iliopsoas Bursitis"
+            "diff_dx": "FAI"
         },
-        "Case 5: Osteoarthritis": {
+        "Case 5": {
             "name": "Jack", "region_label": "Hip", "forthcomingness": 3,
             "demeanor": "Older adult, limping, rubbing front groin area.",
             "chief_complaint": "Deep groin stiffness and difficulty tying shoes or putting on socks.",
@@ -581,9 +581,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Loss of passive hip internal rotation.",
             "social_history": "Retired farmer.",
             "past_medical_history": "Bilateral knee OA.",
-            "diff_dx": "Hip Osteoarthritis vs. Lumbar Spine L3 Referral vs. Trochanteric Bursitis"
+            "diff_dx": "Osteoarthritis"
         },
-        "Case 6: Hip Flexor Strain": {
+        "Case 6": {
             "name": "Karen", "region_label": "Hip", "forthcomingness": 4,
             "demeanor": "Sprinter, pointing to front fold of hip.",
             "chief_complaint": "Sharp pull in front crease of hip when driving knee up high while sprinting.",
@@ -597,11 +597,11 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No palpable mass; hip joint internal rotation painless.",
             "social_history": "Track sprinter.",
             "past_medical_history": "None.",
-            "diff_dx": "Hip Flexor Strain vs. Avulsion Fracture of AIIS vs. Femoral Nerve Entrapment"
+            "diff_dx": "Hip Flexor Strain"
         }
     },
     "Knee": {
-        "Case 1: Patellofemoral Pain Syndrome": {
+        "Case 1": {
             "name": "Liam", "region_label": "Knee", "forthcomingness": 4,
             "demeanor": "Young woman, pointing around kneecap.",
             "chief_complaint": "Dull ache around and behind kneecap when sitting long hours or running downhill.",
@@ -615,9 +615,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Zero joint swelling, no true locking.",
             "social_history": "Marathon trainee.",
             "past_medical_history": "None.",
-            "diff_dx": "Patellofemoral Pain Syndrome vs. Patellar Tendinopathy vs. Plica Syndrome"
+            "diff_dx": "Patellofemoral Pain Syndrome"
         },
-        "Case 2: Meniscal Tear": {
+        "Case 2": {
             "name": "Michael", "region_label": "Knee", "forthcomingness": 3,
             "demeanor": "Holding medial knee joint line.",
             "chief_complaint": "Inner knee joint line pain with painful clicking and locking when squatting.",
@@ -631,9 +631,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Occasional true joint locking where knee cannot fully straighten.",
             "social_history": "Electrician.",
             "past_medical_history": "None.",
-            "diff_dx": "Meniscal Tear vs. MCL Sprain vs. Pes Anserine Bursitis"
+            "diff_dx": "Meniscal Tear"
         },
-        "Case 3: ACL Sprain": {
+        "Case 3": {
             "name": "Elena", "region_label": "Knee", "forthcomingness": 3,
             "demeanor": "Guarding knee, on crutches.",
             "chief_complaint": "Right knee instability and feeling of joint giving way after hearing a loud 'pop'.",
@@ -647,9 +647,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Lachman test and anterior drawer test strongly positive.",
             "social_history": "Soccer athlete.",
             "past_medical_history": "None.",
-            "diff_dx": "ACL Sprain vs. Meniscal Tear vs. Patellar Dislocation"
+            "diff_dx": "ACL Sprain"
         },
-        "Case 4: PCL Sprain": {
+        "Case 4": {
             "name": "Nina", "region_label": "Knee", "forthcomingness": 3,
             "demeanor": "Holding anterior upper shin area.",
             "chief_complaint": "Posterior knee ache and instability when walking down stairs after dashboard injury.",
@@ -660,12 +660,12 @@ DEFAULT_CASE_LIBRARY = {
             "aggravating_factors": "Walking down steep slopes, deceleration, kneeling.",
             "easing_factors": "Resting knee in mild extension.",
             "radiation": "Calf.",
-            "red_flags": "Posterior sag sign positive (tibial tuberosity drops posteriorly).",
+            "red_flags": "Posterior sag sign positive.",
             "social_history": "Sales manager.",
             "past_medical_history": "None.",
-            "diff_dx": "PCL Sprain vs. ACL Sprain vs. Popliteus Muscle Strain"
+            "diff_dx": "PCL Sprain"
         },
-        "Case 5: Osteoarthritis": {
+        "Case 5": {
             "name": "Oscar", "region_label": "Knee", "forthcomingness": 4,
             "demeanor": "Senior citizen, cheerful, rubbing inner knee.",
             "chief_complaint": "Deep knee stiffness and grinding when climbing stairs or getting up from chairs.",
@@ -679,9 +679,9 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Visible genu varum deformity; crepitus on passive movement.",
             "social_history": "Retired teacher.",
             "past_medical_history": "Hypertension.",
-            "diff_dx": "Knee Osteoarthritis vs. Degenerative Meniscal Tear vs. Pes Anserine Bursitis"
+            "diff_dx": "Osteoarthritis"
         },
-        "Case 6: Patellar Instability": {
+        "Case 6": {
             "name": "Patricia", "region_label": "Knee", "forthcomingness": 3,
             "demeanor": "Teenage athlete, hesitant to allow patellar touch.",
             "chief_complaint": "Feeling that kneecap shifted outward and popped out of place when twisting.",
@@ -692,30 +692,30 @@ DEFAULT_CASE_LIBRARY = {
             "aggravating_factors": "Quadriceps contraction, pushing kneecap laterally.",
             "easing_factors": "Knee extension immobilizer, ice.",
             "radiation": "Anterior knee.",
-            "red_flags": "Patellar apprehension test positive; medial retinacular tenderness.",
+            "red_flags": "Patellar apprehension test positive.",
             "social_history": "Dancer.",
             "past_medical_history": "Generalized hypermobility.",
-            "diff_dx": "Patellar Instability vs. ACL Sprain vs. Medial Meniscus Tear"
+            "diff_dx": "Patellar Instability"
         }
     },
     "Ankle and foot": {
-        "Case 1: Tibial Stress Syndrome": {
+        "Case 1": {
             "name": "Ryan", "region_label": "Ankle and foot", "forthcomingness": 4,
             "demeanor": "Runner, touching inner border of shin bone.",
             "chief_complaint": "Diffuse aching pain along the inner lower shin bone after increasing running volume.",
             "history_present_illness": "Ache started 3 weeks ago; worsens toward end of runs.",
             "location_pain": "Posteromedial border of distal third of tibia.",
             "onset_pain": "Gradual onset over 21 days.",
-            "type_pain": "Diffuse dull ache along bone ridge (length >5 cm).",
+            "type_pain": "Diffuse dull ache along bone ridge.",
             "aggravating_factors": "Running on hard pavement, jumping, dorsiflexing ankle.",
             "easing_factors": "Rest, ice along shin border.",
             "radiation": "Down inner shin.",
-            "red_flags": "No focal point bone tenderness (diffuse length of tenderness rules out acute focal fracture).",
+            "red_flags": "No focal point bone tenderness.",
             "social_history": "Cross-country runner.",
             "past_medical_history": "Overpronation.",
-            "diff_dx": "Tibial Stress Syndrome ('Shin Splints') vs. Tibial Stress Fracture vs. Exertional Compartment Syndrome"
+            "diff_dx": "Tibial Stress Syndrome"
         },
-        "Case 2: Exertional Compartment Syndrome": {
+        "Case 2": {
             "name": "Sophia", "region_label": "Ankle and foot", "forthcomingness": 3,
             "demeanor": "Military cadet, holding tight anterolateral shin.",
             "chief_complaint": "Tightness, fullness, and foot numbness that occurs strictly 15 minutes into running and resolves completely with rest.",
@@ -726,12 +726,12 @@ DEFAULT_CASE_LIBRARY = {
             "aggravating_factors": "Sustained high-intensity running.",
             "easing_factors": "Stopping exercise completely for 20 minutes.",
             "radiation": "Dorsum of foot.",
-            "red_flags": "Symptoms clear completely at rest; pulse present throughout.",
+            "red_flags": "Symptoms clear completely at rest.",
             "social_history": "Military recruit.",
             "past_medical_history": "None.",
-            "diff_dx": "Exertional Compartment Syndrome vs. Tibial Stress Syndrome vs. Popliteal Artery Entrapment"
+            "diff_dx": "Exertional Compartment Syndrome"
         },
-        "Case 3: Lateral Ankle Sprain": {
+        "Case 3": {
             "name": "Lucas", "region_label": "Ankle and foot", "forthcomingness": 3,
             "demeanor": "Limping, wearing elastic ankle sleeve.",
             "chief_complaint": "Outer ankle swelling and bruising after rolling ankle inward playing basketball.",
@@ -742,28 +742,28 @@ DEFAULT_CASE_LIBRARY = {
             "aggravating_factors": "Inverting foot, walking on uneven ground.",
             "easing_factors": "Rest, Ice, Compression, Elevation.",
             "radiation": "Lateral foot.",
-            "red_flags": "Ottawa Ankle Rules negative (able to bear weight 4 steps; malleoli non-tender).",
+            "red_flags": "Ottawa Ankle Rules negative.",
             "social_history": "Basketball player.",
             "past_medical_history": "Prior ankle sprain 2 years ago.",
-            "diff_dx": "Lateral Ankle Sprain vs. High Ankle Sprain vs. 5th Metatarsal Fracture"
+            "diff_dx": "Lateral Ankle Sprain"
         },
-        "Case 4: High Ankle Sprain": {
+        "Case 4": {
             "name": "Oliver", "region_label": "Ankle and foot", "forthcomingness": 3,
             "demeanor": "Hockey player, non-weight bearing on foot.",
             "chief_complaint": "Severe pain above the ankle joint line after foot was twisted outward in tackle.",
             "history_present_illness": "Foot forced into external rotation 4 days ago during game.",
-            "location_pain": "Anterior inferior tibiofibular syndesmosis (above ankle joint line).",
+            "location_pain": "Anterior inferior tibiofibular syndesmosis.",
             "onset_pain": "Acute external rotation trauma 4 days ago.",
             "type_pain": "Sharp severe pain above ankle, total inability to bear weight.",
-            "aggravating_factors": "External rotation of foot, ankle dorsiflexion, squeezing shin bones together.",
+            "aggravating_factors": "External rotation of foot, ankle dorsiflexion.",
             "easing_factors": "Rigid boot, non-weight bearing with crutches.",
             "radiation": "Up lower leg shin.",
             "red_flags": "Squeeze test and external rotation stress test positive.",
             "social_history": "Hockey player.",
             "past_medical_history": "None.",
-            "diff_dx": "High Ankle Sprain (Syndesmotic Tear) vs. Lateral Ankle Sprain vs. Maisonneuve Fracture"
+            "diff_dx": "High Ankle Sprain"
         },
-        "Case 5: Plantar Fasciopathy": {
+        "Case 5": {
             "name": "Penelope", "region_label": "Ankle and foot", "forthcomingness": 4,
             "demeanor": "Wincing during initial steps across the room.",
             "chief_complaint": "Agonizing sharp heel pain during the very first steps out of bed in the morning.",
@@ -777,7 +777,7 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "No calf swelling; no systemic joint swelling.",
             "social_history": "Retail manager.",
             "past_medical_history": "BMI 29.",
-            "diff_dx": "Plantar Fasciopathy vs. Calcaneal Stress Fracture vs. Tarsal Tunnel Syndrome"
+            "diff_dx": "Plantar Fasciopathy"
         }
     }
 }
@@ -869,7 +869,8 @@ def build_patient_instructions(c):
         f"PAST MEDICAL HISTORY: {c['past_medical_history']}\n\n"
         f"INSTRUCTIONS FOR CHAT:\n"
         f"- Stay in character as {c['name']} at all times.\n"
-        f"- DO NOT reveal your diagnosis or explicit medical anatomical terms unless describing what a previous doctor told you.\n"
+        f"- ABSOLUTE RULE: DO NOT reveal your medical diagnosis, pathology name, or anatomical code to the student.\n"
+        f"- Describe symptoms naturally in everyday layperson terms.\n"
         f"- Strictly adhere to your COMMUNICATION STYLE level specified above."
     )
 
@@ -925,20 +926,24 @@ if st.sidebar.button("Terminate Session (Logout)"):
 # --- STAGE 3: ADMIN CASE EDITOR PAGE ---
 if role == "Admin/Instructor Editor":
     st.title("🛠️ Admin Case Management Matrix")
-    st.write("Select a joint domain and specific patient case to edit attributes permanently.")
+    st.write("Select a joint domain and case to customize parameters. True underlying diagnoses remain visible only here in Admin mode.")
     
     cat_col, case_col = st.columns(2)
     with cat_col:
         selected_category = st.selectbox("1. Select Joint Domain:", list(st.session_state.case_library.keys()))
     with case_col:
-        selected_case_key = st.selectbox("2. Select Patient Case:", list(st.session_state.case_library[selected_category].keys()))
+        selected_case_key = st.selectbox(
+            "2. Select Patient Case:", 
+            list(st.session_state.case_library[selected_category].keys()),
+            format_func=lambda k: f"{k} — Patient: {st.session_state.case_library[selected_category][k]['name']} [{st.session_state.case_library[selected_category][k].get('diff_dx', 'Hidden')}]"
+        )
         
     case_data = st.session_state.case_library[selected_category][selected_case_key]
     
     st.markdown("---")
     
     with st.form("admin_case_form"):
-        st.subheader(f"Editing: {case_data['name']} ({selected_category})")
+        st.subheader(f"Editing {selected_case_key}: Patient {case_data['name']} ({selected_category})")
         
         st.markdown("### 🎚️ Patient Communication Style & Forthcomingness")
         e_forthcoming = st.slider(
@@ -974,7 +979,7 @@ if role == "Admin/Instructor Editor":
             e_red = st.text_area("Red Flag Symptoms Status", value=case_data.get("red_flags", ""))
             e_soc = st.text_area("Social History", value=case_data.get("social_history", ""))
             e_pmh = st.text_area("Past Medical History", value=case_data.get("past_medical_history", ""))
-            e_diff = st.text_area("Differential Diagnosis Framework (Faculty Notes)", value=case_data.get("diff_dx", ""))
+            e_diff = st.text_input("Hidden Ground Truth Diagnosis (Faculty Master Key)", value=case_data.get("diff_dx", ""))
             
         save_submitted = st.form_submit_button("Save Case Updates Permanently", type="primary")
         
@@ -997,7 +1002,7 @@ if role == "Admin/Instructor Editor":
                 "diff_dx": e_diff
             })
             save_cases_to_disk(st.session_state.case_library)
-            st.success(f"Case '{e_name}' in {selected_category} permanently saved!")
+            st.success(f"Case '{selected_case_key}' ({e_name}) in {selected_category} permanently saved!")
 
     st.markdown("---")
     with st.expander("⚠️ Danger Zone: Revert to Factory Defaults"):
@@ -1011,13 +1016,17 @@ if role == "Admin/Instructor Editor":
 # --- STAGE 4: STUDENT CLINICAL SIMULATOR PAGE ---
 else:
     st.title("🎓 Interactive Clinical Assessment")
-    st.write("Complete a subjective history on the assigned patient. When you are ready to conclude the encounter, click **Input Differential Diagnoses** below.")
+    st.write("Select a region and case number to begin taking a subjective history. Diagnosis remains hidden until evaluation.")
     
     col_cat, col_case = st.columns(2)
     with col_cat:
         student_category = st.selectbox("Select Joint Category:", list(st.session_state.case_library.keys()))
     with col_case:
-        student_case_key = st.selectbox("Select Patient Case:", list(st.session_state.case_library[student_category].keys()))
+        student_case_key = st.selectbox(
+            "Select Patient Case:", 
+            list(st.session_state.case_library[student_category].keys()),
+            format_func=lambda k: f"{k} — Patient: {st.session_state.case_library[student_category][k]['name']}"
+        )
         
     active_case = st.session_state.case_library[student_category][student_case_key]
     
@@ -1028,7 +1037,7 @@ else:
         st.session_state.submitted_differentials = ["", "", ""]
         st.session_state.last_chosen_case_id = unique_case_id
 
-    st.info(f"📋 **Current Active Case:** Patient {active_case['name']} — *{student_case_key}*")
+    st.info(f"📋 **Active Encounter:** {student_category} ({student_case_key}) — Patient Name: **{active_case['name']}**")
     
     # Display Chat Messages
     for msg in st.session_state.messages:
@@ -1101,7 +1110,7 @@ else:
             export_string += f"==================================================\n"
             export_string += f"Student CCID: {st.session_state.ccid}\n"
             export_string += f"Joint Category: {student_category}\n"
-            export_string += f"Case Title: {student_case_key}\n"
+            export_string += f"Case Identifier: {student_case_key}\n"
             export_string += f"Patient Name: {active_case['name']}\n"
             export_string += f"Encounter Status: {'COMPLETED' if st.session_state.differentials_submitted else 'IN PROGRESS'}\n"
             export_string += f"--------------------------------------------------\n\n"
@@ -1123,6 +1132,6 @@ else:
             st.sidebar.download_button(
                 label="📥 Download Transcript (.txt)",
                 data=export_string,
-                file_name=f"MSK_Assessment_{st.session_state.ccid}_Patient_{active_case['name']}.txt",
+                file_name=f"MSK_Assessment_{st.session_state.ccid}_{student_case_key}.txt",
                 mime="text/plain"
             )
