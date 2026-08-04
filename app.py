@@ -926,7 +926,7 @@ if st.sidebar.button("Terminate Session (Logout)"):
 # --- STAGE 3: ADMIN CASE EDITOR PAGE ---
 if role == "Admin/Instructor Editor":
     st.title("🛠️ Admin Case Management Matrix")
-    st.write("Select a joint domain and case to customize parameters. True underlying diagnoses remain visible only here in Admin mode.")
+    st.write("Select a joint domain and case to customize parameters.")
     
     cat_col, case_col = st.columns(2)
     with cat_col:
@@ -935,7 +935,7 @@ if role == "Admin/Instructor Editor":
         selected_case_key = st.selectbox(
             "2. Select Patient Case:", 
             list(st.session_state.case_library[selected_category].keys()),
-            format_func=lambda k: f"{k} — Patient: {st.session_state.case_library[selected_category][k]['name']} [{st.session_state.case_library[selected_category][k].get('diff_dx', 'Hidden')}]"
+            format_func=lambda k: f"{k} — Patient: {st.session_state.case_library[selected_category][k]['name']}"
         )
         
     case_data = st.session_state.case_library[selected_category][selected_case_key]
@@ -1016,7 +1016,7 @@ if role == "Admin/Instructor Editor":
 # --- STAGE 4: STUDENT CLINICAL SIMULATOR PAGE ---
 else:
     st.title("🎓 Interactive Clinical Assessment")
-    st.write("Select a region and case number to begin taking a subjective history. Diagnosis remains hidden until evaluation.")
+    st.write("Select a region and patient to begin taking a subjective history.")
     
     col_cat, col_case = st.columns(2)
     with col_cat:
@@ -1082,9 +1082,9 @@ else:
         def open_differential_modal():
             st.write("Enter your top 3 differential diagnoses for this patient encounter. Submitting will end the patient interaction.")
             with st.form("diff_submission_form"):
-                dx1 = st.text_input("Differential Diagnosis 1 (Primary):", placeholder="e.g., De-Quervains Tenosynovitis")
-                dx2 = st.text_input("Differential Diagnosis 2:", placeholder="e.g., Scaphoid Fracture")
-                dx3 = st.text_input("Differential Diagnosis 3:", placeholder="e.g., 1st CMC Osteoarthritis")
+                dx1 = st.text_input("Differential Diagnosis 1 (Primary):", placeholder="e.g., Primary Suspected Condition")
+                dx2 = st.text_input("Differential Diagnosis 2:", placeholder="e.g., Secondary Alternative")
+                dx3 = st.text_input("Differential Diagnosis 3:", placeholder="e.g., Tertiary Alternative")
                 
                 submitted = st.form_submit_button("Submit & End Encounter", type="primary")
                 if submitted:
