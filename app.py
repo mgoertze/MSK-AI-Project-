@@ -8,9 +8,9 @@ GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 client = Groq(api_key=GROQ_API_KEY)
 
 MODEL_NAME = "llama-3.1-8b-instant"
-DATA_FILE = 
+DATA_FILE = "cases.json"
 
-# --- DEFAULT ANONYMIZED CLINICAL LIBRARY (NO DIAGNOSES IN CASE BODY) ---
+# --- DEFAULT ANONYMIZED CLINICAL LIBRARY (NO DIAGNOSES IN CASE BODY OR DROPDOWNS) ---
 DEFAULT_CASE_LIBRARY = {
     "Cervical spine": {
         "Case 1": {
@@ -210,22 +210,15 @@ DEFAULT_CASE_LIBRARY = {
     }
 }
 
-# --- PERSISTENT DISK STORAGE FUNCTIONS ---
-def load_cases_from_disk():
-    if os.path.exists(DATA_FILE):
-        try:
-            with open(DATA_FILE, "r") as f:
-                data = json.load(f)
-                return data
-        except Exception:
-            return DEFAULT_CASE_LIBRARY
-    else:
-        save_cases_to_disk(DEFAULT_CASE_LIBRARY)
-        return DEFAULT_CASE_LIBRARY
-
+# --- PERSISTENT DISK STORAGE FUNCTIONS WITH FORCED OVERWRITE ---
 def save_cases_to_disk(case_data):
     with open(DATA_FILE, "w") as f:
         json.dump(case_data, f, indent=4)
+
+def load_cases_from_disk():
+    # Force overwrite any old cached JSON file on disk every time app loads
+    save_cases_to_disk(DEFAULT_CASE_LIBRARY)
+    return DEFAULT_CASE_LIBRARY
 
 # --- INITIAL APP STATE SETUP ---
 if "ccid" not in st.session_state:
@@ -235,7 +228,7 @@ if "messages" not in st.session_state:
 if "is_admin" not in st.session_state:
     st.session_state.is_admin = False
 
-# Force load from default if cases.json contains obsolete data
+# Force clear session state case library on startup
 st.session_state.case_library = load_cases_from_disk()
 
 if "differentials_submitted" not in st.session_state:
@@ -361,7 +354,6 @@ if role == "Admin/Instructor Editor":
     with cat_col:
         selected_category = st.selectbox("1. Select Joint Domain:", list(st.session_state.case_library.keys()))
     with case_col:
-        # STRICT DISPLAY: Case Number + Patient Name ONLY
         selected_case_key = st.selectbox(
             "2. Select Patient Case:", 
             list(st.session_state.case_library[selected_category].keys()),
