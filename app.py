@@ -8,7 +8,7 @@ GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 client = Groq(api_key=GROQ_API_KEY)
 
 MODEL_NAME = "llama-3.1-8b-instant"
-DATA_FILE = "cases.json"
+DATA_FILE = 
 
 # --- DEFAULT ANONYMIZED CLINICAL LIBRARY (NO DIAGNOSES IN CASE BODY) ---
 DEFAULT_CASE_LIBRARY = {
