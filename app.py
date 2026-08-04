@@ -10,7 +10,7 @@ client = Groq(api_key=GROQ_API_KEY)
 MODEL_NAME = "llama-3.1-8b-instant"
 DATA_FILE = "cases.json"
 
-# --- DEFAULT 48-CASE ANONYMIZED CLINICAL LIBRARY (DIAGNOSES HIDDEN) ---
+# --- DEFAULT ANONYMIZED CLINICAL LIBRARY (NO DIAGNOSES IN CASE BODY) ---
 DEFAULT_CASE_LIBRARY = {
     "Cervical spine": {
         "Case 1": {
@@ -33,11 +33,11 @@ DEFAULT_CASE_LIBRARY = {
             "name": "Beatrice", "region_label": "Cervical spine", "forthcomingness": 3,
             "demeanor": "Holds head slightly turned, hesitant to rotate quickly.",
             "chief_complaint": "Sharp catching pain when looking over right shoulder while driving.",
-            "history_present_illness": "Woke up 4 days ago after sleeping in an awkward position with a 'locked' neck.",
-            "location_pain": "Right unilateral C4-C6 cervical region.",
+            "history_present_illness": "Woke up 4 days ago after sleeping in an awkward position with a stiff neck.",
+            "location_pain": "Right unilateral upper neck region.",
             "onset_pain": "Acute onset upon waking 4 days ago.",
             "type_pain": "Sharp catch on rotation, dull localized ache at rest.",
-            "aggravating_factors": "Right cervical rotation and extension.",
+            "aggravating_factors": "Right neck rotation and bending backwards.",
             "easing_factors": "Chin tucks, keeping neck neutral, gentle warmth.",
             "radiation": "Localized to upper scapular border.",
             "red_flags": "Neurological examination completely clear.",
@@ -47,18 +47,18 @@ DEFAULT_CASE_LIBRARY = {
         },
         "Case 3": {
             "name": "Charles", "region_label": "Cervical spine", "forthcomingness": 3,
-            "demeanor": "Sits very upright, cautious with cervical flexion.",
+            "demeanor": "Sits very upright, cautious with neck flexion.",
             "chief_complaint": "Deep central neck ache that worsens when looking down at phone.",
             "history_present_illness": "Gradual onset over 6 weeks after lifting heavy boxes in garage.",
-            "location_pain": "Central lower cervical spine.",
+            "location_pain": "Central lower neck.",
             "onset_pain": "Gradual progression over 6 weeks.",
             "type_pain": "Deep toothache-like ache.",
             "aggravating_factors": "Neck flexion, coughing, sitting without head support.",
-            "easing_factors": "Resting head against high-back chair, cervical retraction.",
-            "radiation": "Interscapular pain (referred, non-dermatomal).",
+            "easing_factors": "Resting head against high-back chair, chin retractions.",
+            "radiation": "Interscapular pain between shoulder blades.",
             "red_flags": "No arm numbness or hand weakness.",
             "social_history": "Warehouse manager.",
-            "past_medical_history": "Lumbar strain 5 years ago.",
+            "past_medical_history": "Lower back strain 5 years ago.",
             "diff_dx": "Mechanical Neck Pain (Discogenic Non-Radicular)"
         },
         "Case 4": {
@@ -66,13 +66,13 @@ DEFAULT_CASE_LIBRARY = {
             "demeanor": "Holding arm on top of head for pain relief.",
             "chief_complaint": "Sharp shooting electric pain down left arm into thumb and index finger.",
             "history_present_illness": "Severe arm pain started 5 days ago after sudden head turn while exercising.",
-            "location_pain": "Left neck radiating down arm to 1st and 2nd digits.",
+            "location_pain": "Left neck radiating down arm to thumb and index finger.",
             "onset_pain": "Acute event 5 days ago.",
             "type_pain": "Sharp, burning, electric shock sensation.",
-            "aggravating_factors": "Cervical extension, sidebending to left.",
-            "easing_factors": "Placing left hand on top of head (Bakody sign).",
-            "radiation": "C6 dermatomal distribution.",
-            "red_flags": "Mild weakness in biceps / wrist extension; no gait ataxia.",
+            "aggravating_factors": "Bending neck backward, tilting to left.",
+            "easing_factors": "Placing left hand on top of head.",
+            "radiation": "Down left arm into thumb and index finger.",
+            "red_flags": "Mild weakness in biceps / wrist extension; no gait imbalance.",
             "social_history": "Accountant.",
             "past_medical_history": "Hypertension.",
             "diff_dx": "Cervical Radiculopathy"
@@ -80,15 +80,15 @@ DEFAULT_CASE_LIBRARY = {
         "Case 5": {
             "name": "Ethan", "region_label": "Cervical spine", "forthcomingness": 2,
             "demeanor": "Anxious, manually supporting chin with hand.",
-            "chief_complaint": "Feeling like head is 'heavy and unstable' with paresthesia in lip and hands upon bending neck forward.",
-            "history_present_illness": "Followed high-velocity whiplash trauma in motor vehicle collision 2 weeks ago.",
-            "location_pain": "Upper cervical (C1-C2) and suboccipital region.",
+            "chief_complaint": "Feeling like head is heavy and unstable with tingling in lip and hands upon bending neck forward.",
+            "history_present_illness": "Followed high-velocity jolting motion in car collision 2 weeks ago.",
+            "location_pain": "Upper neck and back of head.",
             "onset_pain": "Acute post-trauma 14 days ago.",
             "type_pain": "Deep pressure accompanied by neurological sensations on flexion.",
-            "aggravating_factors": "Cervical flexion, unexpected bumps in car.",
-            "easing_factors": "Lying supine, supporting head firmly with hands.",
-            "radiation": "Perioral paresthesia and bilateral glove-like hand tingling.",
-            "red_flags": "Lhermitte sign positive; perioral numbness present on flexion.",
+            "aggravating_factors": "Bending neck forward, unexpected bumps in car.",
+            "easing_factors": "Lying flat, supporting head firmly with hands.",
+            "radiation": "Lip tingling and bilateral hand tingling.",
+            "red_flags": "Electric shock down spine on bending neck forward; lip numbness.",
             "social_history": "College student.",
             "past_medical_history": "Rheumatoid Arthritis.",
             "diff_dx": "Transverse Ligament Instability"
@@ -98,15 +98,15 @@ DEFAULT_CASE_LIBRARY = {
             "demeanor": "Elderly, cautious wide-based gait, clumsy holding pen.",
             "chief_complaint": "Progressive hand clumsiness, difficulty buttoning shirts, and feeling off-balance when walking.",
             "history_present_illness": "Symptoms worsening over 6 months; dropping keys frequently.",
-            "location_pain": "Diffuse neck stiffness, global hand paresthesia.",
+            "location_pain": "Diffuse neck stiffness, global hand tingling.",
             "onset_pain": "Insidious progression over 6 months.",
-            "type_pain": "Vague ache with profound functional clumsiness.",
+            "type_pain": "Vague ache with functional clumsiness.",
             "aggravating_factors": "Walking on uneven ground, looking down.",
             "easing_factors": "Resting in supportive armchairs.",
             "radiation": "Bilateral hands and legs.",
-            "red_flags": "Positive Hoffmann sign, gait ataxia, Babinski positive.",
+            "red_flags": "Loss of fine manual dexterity, unsteadiness walking.",
             "social_history": "Retired school teacher.",
-            "past_medical_history": "Cervical spondylosis.",
+            "past_medical_history": "Longstanding neck wear and tear.",
             "diff_dx": "Cervical Myelopathy"
         }
     },
@@ -114,33 +114,33 @@ DEFAULT_CASE_LIBRARY = {
         "Case 1": {
             "name": "George", "region_label": "Lumbar spine", "forthcomingness": 4,
             "demeanor": "Moving slowly, holding lower back with both hands.",
-            "chief_complaint": "Acute lower back muscle spasm after lifting heavy garden soil.",
+            "chief_complaint": "Acute lower back muscle tightness after lifting heavy garden soil.",
             "history_present_illness": "Felt sudden back tightness 2 days ago while lifting.",
-            "location_pain": "Lumbosacral paraspinal muscles bilaterally.",
-            "onset_pain": "Acute mechanical onset 48 hours ago.",
+            "location_pain": "Lower back muscles on both sides.",
+            "onset_pain": "Acute onset 48 hours ago.",
             "type_pain": "Tight throbbing muscle ache.",
             "aggravating_factors": "Bending forward, standing from sitting, twisting.",
             "easing_factors": "Lying flat with knees bent, ice packs.",
             "radiation": "None; stays in lower back.",
-            "red_flags": "Normal leg strength, normal reflex exam.",
+            "red_flags": "Normal leg strength and sensation.",
             "social_history": "Landscape designer.",
             "past_medical_history": "None.",
             "diff_dx": "Mechanical Low Back Pain (Lumbar Strain)"
         },
         "Case 2": {
             "name": "Hannah", "region_label": "Lumbar spine", "forthcomingness": 3,
-            "demeanor": "Stands slightly stooped forward to avoid extension.",
+            "demeanor": "Stands slightly stooped forward to avoid arching back.",
             "chief_complaint": "Dull ache in low back worse when standing straight or arching back.",
             "history_present_illness": "Developing over 1 year; worse in mornings.",
-            "location_pain": "L4-S1 bilateral low back and upper buttocks.",
+            "location_pain": "Lower back and upper buttocks.",
             "onset_pain": "Gradual progressive onset.",
-            "type_pain": "Dull localized bone and joint ache.",
-            "aggravating_factors": "Lumbar extension, standing upright, prolonged walking.",
-            "easing_factors": "Sitting flexed, leaning forward over counter.",
-            "radiation": "Posterior buttock, does not cross knee.",
-            "red_flags": "No neurological deficits down legs.",
+            "type_pain": "Dull localized joint ache.",
+            "aggravating_factors": "Arching back, standing upright, prolonged walking.",
+            "easing_factors": "Sitting bent forward, leaning forward over counter.",
+            "radiation": "Upper buttock area.",
+            "red_flags": "No nerve pain or weakness down legs.",
             "social_history": "Retired administrative clerk.",
-            "past_medical_history": "Lumbar osteoarthritis.",
+            "past_medical_history": "Spinal joint wear and tear.",
             "diff_dx": "Mechanical Low Back Pain (Facet Arthropathy)"
         },
         "Case 3": {
@@ -148,13 +148,13 @@ DEFAULT_CASE_LIBRARY = {
             "demeanor": "Prefers standing during interview; sitting causes groans.",
             "chief_complaint": "Deep central low back pain made agonizing by prolonged sitting.",
             "history_present_illness": "Felt a 'pop' in back 3 weeks ago while moving couch.",
-            "location_pain": "Central L5-S1 lumbar spine.",
-            "onset_pain": "Subacute mechanical onset 3 weeks ago.",
-            "type_pain": "Deep, pressure-like toothache in low back.",
+            "location_pain": "Central lower back.",
+            "onset_pain": "Subacute onset 3 weeks ago.",
+            "type_pain": "Deep, pressure-like ache in low back.",
             "aggravating_factors": "Sitting, forward bending, coughing, sneezing.",
-            "easing_factors": "Standing, walking, prone press-ups.",
-            "radiation": "Gluteal region bilaterally.",
-            "red_flags": "Straight leg raise negative for true radicular leg pain.",
+            "easing_factors": "Standing, walking, arching back gently while lying down.",
+            "radiation": "Buttock region on both sides.",
+            "red_flags": "No true shooting leg pain.",
             "social_history": "Office worker.",
             "past_medical_history": "None.",
             "diff_dx": "Mechanical Low Back Pain (Discogenic)"
@@ -164,15 +164,15 @@ DEFAULT_CASE_LIBRARY = {
             "demeanor": "Elderly, leaning forward over a walking frame.",
             "chief_complaint": "Bilateral leg aching and heaviness that forces sitting down after walking 5 minutes.",
             "history_present_illness": "Gradual progression over 2 years; can only shop using a grocery cart.",
-            "location_pain": "Lower lumbar spine radiating to bilateral posterior thighs and calves.",
+            "location_pain": "Lower back radiating into back of both thighs and calves.",
             "onset_pain": "Insidious onset over 24 months.",
             "type_pain": "Heavy, cramping leg fatigue.",
-            "aggravating_factors": "Walking upright, lumbar extension.",
-            "easing_factors": "Sitting down, bending forward ('shopping cart sign').",
-            "radiation": "Bilateral legs.",
-            "red_flags": "Pedal pulses strong; no bowel or bladder changes.",
+            "aggravating_factors": "Walking upright, standing straight.",
+            "easing_factors": "Sitting down, bending forward.",
+            "radiation": "Both legs down to calves.",
+            "red_flags": "Leg pulses normal; no bowel or bladder changes.",
             "social_history": "Retired librarian.",
-            "past_medical_history": "Spinal stenosis.",
+            "past_medical_history": "Spinal narrowing.",
             "diff_dx": "Neurogenic Claudication / Lateral Foraminal Stenosis"
         },
         "Case 5": {
@@ -180,13 +180,13 @@ DEFAULT_CASE_LIBRARY = {
             "demeanor": "Anxious, guarding right leg.",
             "chief_complaint": "Sharp burning pain shooting down back of right leg to top of foot.",
             "history_present_illness": "Onset 10 days ago after heavy squatting at gym.",
-            "location_pain": "Right L5 dermatome (buttock, lateral thigh, dorsum of foot).",
+            "location_pain": "Right buttock, outer thigh, and top of foot.",
             "onset_pain": "Acute event 10 days ago.",
             "type_pain": "Sharp, electric shock, burning pain.",
-            "aggravating_factors": "Sitting, coughing, straight leg elevation.",
-            "easing_factors": "Lying supine with legs elevated on pillows.",
+            "aggravating_factors": "Sitting, coughing, lifting leg straight up.",
+            "easing_factors": "Lying flat with legs elevated on pillows.",
             "radiation": "Down leg into foot.",
-            "red_flags": "Dorsiflexion weakness (great toe extension 4/5); no bowel/bladder dysfunction.",
+            "red_flags": "Big toe weakness; no bowel or bladder changes.",
             "social_history": "Personal trainer.",
             "past_medical_history": "None.",
             "diff_dx": "Radiculopathy"
@@ -194,590 +194,18 @@ DEFAULT_CASE_LIBRARY = {
         "Case 6": {
             "name": "Laura", "region_label": "Lumbar spine", "forthcomingness": 2,
             "demeanor": "Distressed, tearful, unable to sit comfortably.",
-            "chief_complaint": "Sudden bilateral leg weakness, groin numbness, and loss of bowel/bladder control.",
-            "history_present_illness": "Severe back pain for 1 week suddenly exploded into leg numbness and incontinence 6 hours ago.",
-            "location_pain": "Low back, bilateral legs, groin ('saddle area').",
-            "onset_pain": "Acute red flag emergency onset 6 hours ago.",
+            "chief_complaint": "Sudden bilateral leg weakness, groin numbness, and loss of bowel and bladder control.",
+            "history_present_illness": "Severe back pain for 1 week suddenly exploded into leg numbness and loss of toilet control 6 hours ago.",
+            "location_pain": "Low back, both legs, and groin/saddle area.",
+            "onset_pain": "Acute emergency onset 6 hours ago.",
             "type_pain": "Severe deep pain with profound numbness.",
             "aggravating_factors": "Any movement.",
             "easing_factors": "None.",
-            "radiation": "Bilateral legs and perineum.",
-            "red_flags": "Saddle anesthesia, urinary retention/incontinence, bilateral leg foot drop.",
+            "radiation": "Both legs and groin region.",
+            "red_flags": "Numbness around groin, loss of bladder control, severe weakness in feet.",
             "social_history": "Teacher.",
-            "past_medical_history": "Lumbar disc herniation.",
+            "past_medical_history": "Slipped disc in back.",
             "diff_dx": "Cauda Equina Syndrome"
-        }
-    },
-    "Shoulder": {
-        "Case 1": {
-            "name": "Maya", "region_label": "Shoulder", "forthcomingness": 3,
-            "demeanor": "Holding shoulder, wincing when lifting arm.",
-            "chief_complaint": "Anterolateral shoulder pain when reaching overhead or taking off sweater.",
-            "history_present_illness": "Pain developed gradually over 2 months after painting walls.",
-            "location_pain": "Anterolateral deltoid insertion.",
-            "onset_pain": "Insidious onset over 8 weeks.",
-            "type_pain": "Dull ache, sharp painful arc between 60-120 degrees.",
-            "aggravating_factors": "Reaching overhead, reaching behind back, lying on affected side.",
-            "easing_factors": "Resting arm at side, ice packs.",
-            "radiation": "Mid-deltoid muscle belly.",
-            "red_flags": "No sudden total loss of muscle strength.",
-            "social_history": "Painter, handyman.",
-            "past_medical_history": "None.",
-            "diff_dx": "Rotator Cuff Related Pain Syndrome"
-        },
-        "Case 2": {
-            "name": "Nora", "region_label": "Shoulder", "forthcomingness": 3,
-            "demeanor": "Elderly, arm hanging limp at side, unable to lift arm against gravity.",
-            "chief_complaint": "Inability to raise right arm after falling onto shoulder 2 weeks ago.",
-            "history_present_illness": "Fell 14 days ago; felt tearing sensation, arm has been non-functional since.",
-            "location_pain": "Global anterolateral shoulder.",
-            "onset_pain": "Acute traumatic onset 2 weeks ago.",
-            "type_pain": "Deep dull ache; severe weakness / pseudo-paralysis on abduction.",
-            "aggravating_factors": "Attempting to raise arm.",
-            "easing_factors": "Supporting elbow with opposite hand.",
-            "radiation": "Down arm to elbow.",
-            "red_flags": "Positive drop arm test; complete inability to hold arm abducted.",
-            "social_history": "Retired gardener.",
-            "past_medical_history": "Chronic shoulder impingement.",
-            "diff_dx": "Massive Rotator Cuff Rupture"
-        },
-        "Case 3": {
-            "name": "Oliver", "region_label": "Shoulder", "forthcomingness": 3,
-            "demeanor": "Holding arm pinned tightly against ribs.",
-            "chief_complaint": "Severe global stiffness with loss of both active and passive shoulder movement.",
-            "history_present_illness": "Deep shoulder ache started 5 months ago and progressively froze shoulder movement.",
-            "location_pain": "Deep shoulder joint capsule.",
-            "onset_pain": "Insidious progression over 20 weeks.",
-            "type_pain": "Agonizing sharp pain at end-range, constant deep ache at night.",
-            "aggravating_factors": "External rotation, sudden movements, sleeping on arm.",
-            "easing_factors": "Resting arm immobilized at side.",
-            "radiation": "Upper arm.",
-            "red_flags": "Profound loss of passive external rotation.",
-            "social_history": "Executive.",
-            "past_medical_history": "Type II Diabetes Mellitus.",
-            "diff_dx": "Adhesive Capsulitis"
-        },
-        "Case 4": {
-            "name": "Penelope", "region_label": "Shoulder", "forthcomingness": 4,
-            "demeanor": "Young, hesitant to let doctor move arm into high-five position.",
-            "chief_complaint": "Feeling that shoulder is going to 'pop out' when throwing or reaching overhead.",
-            "history_present_illness": "Dislocated shoulder playing rugby 6 months ago; felt unstable ever since.",
-            "location_pain": "Anterior glenohumeral joint line.",
-            "onset_pain": "Recurrent instability following acute dislocation.",
-            "type_pain": "Sharp apprehension and slipping sensation.",
-            "aggravating_factors": "Abduction and external rotation ('cocking phase' of throw).",
-            "easing_factors": "Keeping arm in internal rotation against chest.",
-            "radiation": "Anterior arm.",
-            "red_flags": "Positive apprehension test; axillary nerve intact.",
-            "social_history": "Rugby player.",
-            "past_medical_history": "Anterior dislocation 6 months ago.",
-            "diff_dx": "Anterior Instability"
-        },
-        "Case 5": {
-            "name": "Quentin", "region_label": "Shoulder", "forthcomingness": 3,
-            "demeanor": "Guarded, holding shoulder still.",
-            "chief_complaint": "Aching shoulder pain with restriction in reaching up into cupboards.",
-            "history_present_illness": "Spontaneous onset over past 3 months following minor wrist injury.",
-            "location_pain": "Global shoulder joint capsule.",
-            "onset_pain": "Gradual onset over 12 weeks.",
-            "type_pain": "Dull constant ache, sharp with forced movement.",
-            "aggravating_factors": "Reaching behind back, reaching overhead.",
-            "easing_factors": "Keeping arm close to trunk.",
-            "radiation": "Deltoid area.",
-            "red_flags": "Passive motion restricted in all planes.",
-            "social_history": "Teacher.",
-            "past_medical_history": "Hypothyroidism.",
-            "diff_dx": "Frozen Shoulder"
-        },
-        "Case 6": {
-            "name": "Rosa", "region_label": "Shoulder", "forthcomingness": 3,
-            "demeanor": "Pointing directly to top bump on shoulder.",
-            "chief_complaint": "Sharp pain on the very top of shoulder after landing directly on it during cycling crash.",
-            "history_present_illness": "Crashed bicycle 5 days ago, impacting lateral point of shoulder.",
-            "location_pain": "Acromioclavicular (AC) joint top of shoulder.",
-            "onset_pain": "Acute trauma 5 days ago.",
-            "type_pain": "Sharp focal pain, visible step-off deformity.",
-            "aggravating_factors": "Cross-body adduction (reaching across chest), overhead reaching.",
-            "easing_factors": "Arm supported in sling.",
-            "radiation": "Trapezius muscle ridge.",
-            "red_flags": "Skin intact over bump; neurovascular exam normal distally.",
-            "social_history": "Cyclist.",
-            "past_medical_history": "None.",
-            "diff_dx": "AC Joint Sprain"
-        }
-    },
-    "Elbow": {
-        "Case 1": {
-            "name": "Samuel", "region_label": "Elbow", "forthcomingness": 4,
-            "demeanor": "Holding inner elbow knob.",
-            "chief_complaint": "Inner elbow pain when flexing wrist or gripping objects tightly.",
-            "history_present_illness": "Gradual onset over 2 months after intensive golf practice.",
-            "location_pain": "Medial epicondyle of elbow.",
-            "onset_pain": "Insidious onset over 8 weeks.",
-            "type_pain": "Aching over inner bone, sharp during wrist flexion.",
-            "aggravating_factors": "Golf swings, carrying heavy buckets, wrist flexing.",
-            "easing_factors": "Rest, ice, wrist flexor bracing.",
-            "radiation": "Flexor muscle mass of anterior forearm.",
-            "red_flags": "No ulnar nerve numbness in 4th/5th digits.",
-            "social_history": "Golfer, carpenter.",
-            "past_medical_history": "None.",
-            "diff_dx": "Medial Epicondylosis"
-        },
-        "Case 2": {
-            "name": "Tina", "region_label": "Elbow", "forthcomingness": 3,
-            "demeanor": "Wincing when picking up coffee cup.",
-            "chief_complaint": "Outer elbow pain and weak grip strength.",
-            "history_present_illness": "Onset 6 weeks ago after repetitive manual pruning in garden and tennis.",
-            "location_pain": "Lateral epicondyle of elbow.",
-            "onset_pain": "Insidious onset 6 weeks ago.",
-            "type_pain": "Sharp burning sensation over outer elbow point.",
-            "aggravating_factors": "Shaking hands, opening jar lids, gripping, backhand tennis strokes.",
-            "easing_factors": "Rest, ice, counterforce strap.",
-            "radiation": "Distally down extensor forearm muscles.",
-            "red_flags": "Joint range of motion fully intact.",
-            "social_history": "IT specialist, tennis player.",
-            "past_medical_history": "None.",
-            "diff_dx": "Lateral Epicondylosis"
-        },
-        "Case 3": {
-            "name": "Victor", "region_label": "Elbow", "forthcomingness": 3,
-            "demeanor": "Young baseball player, rubbing inner elbow crease.",
-            "chief_complaint": "Inner elbow pain and popping feeling during acceleration phase of pitch.",
-            "history_present_illness": "Felt a sharp pop in inner elbow during fast pitch 1 week ago.",
-            "location_pain": "Ulnar collateral ligament along medial elbow joint line.",
-            "onset_pain": "Acute event during throwing 7 days ago.",
-            "type_pain": "Sharp inner elbow joint pain with throwing.",
-            "aggravating_factors": "Valgus stress on elbow, high-velocity throwing.",
-            "easing_factors": "Resting from throwing, ice.",
-            "radiation": "Medial elbow.",
-            "red_flags": "Valgus stress test reveals increased laxity.",
-            "social_history": "College baseball pitcher.",
-            "past_medical_history": "Medial elbow soreness 1 year ago.",
-            "diff_dx": "UCL Sprain"
-        },
-        "Case 4": {
-            "name": "Wendy", "region_label": "Elbow", "forthcomingness": 4,
-            "demeanor": "Pointing to large fluid-filled sac at tip of elbow.",
-            "chief_complaint": "Large, goose-egg shaped fluid swelling on the tip of the elbow.",
-            "history_present_illness": "Swelling appeared over 3 days after leaning on hard desk while working.",
-            "location_pain": "Posterior olecranon tip.",
-            "onset_pain": "Rapid onset swelling over 72 hours.",
-            "type_pain": "Pressure discomfort, non-tender unless pressed hard.",
-            "aggravating_factors": "Direct pressure on elbow tip.",
-            "easing_factors": "Avoiding contact pressure, compression.",
-            "radiation": "None.",
-            "red_flags": "No fever, no skin redness or warmth (aseptic).",
-            "social_history": "Office worker.",
-            "past_medical_history": "Gout.",
-            "diff_dx": "Olecranon Bursitis"
-        },
-        "Case 5": {
-            "name": "Xavier", "region_label": "Elbow", "forthcomingness": 2,
-            "demeanor": "Guarding elbow flexed at 90 degrees, visible bruising in crease.",
-            "chief_complaint": "Sudden pop in elbow crease while lifting heavy motor, followed by weak arm curling.",
-            "history_present_illness": "Heard/felt a pop 4 days ago lifting heavy machinery.",
-            "location_pain": "Anterodistal cubital fossa.",
-            "onset_pain": "Acute traumatic onset 4 days ago.",
-            "type_pain": "Deep tearing ache, severe weakness in supination.",
-            "aggravating_factors": "Flexing elbow, supinating forearm against load.",
-            "easing_factors": "Resting arm supported.",
-            "radiation": "Anterior distal upper arm.",
-            "red_flags": "Positive hook test (distal tendon cord non-palpable); ecchymosis.",
-            "social_history": "Mechanic.",
-            "past_medical_history": "None.",
-            "diff_dx": "Distal Biceps Rupture"
-        },
-        "Case 6": {
-            "name": "Yasmine", "region_label": "Elbow", "forthcomingness": 3,
-            "demeanor": "Older manual laborer, elbow stuck in partial flexion.",
-            "chief_complaint": "Deep elbow joint ache and inability to fully straighten or bend elbow.",
-            "history_present_illness": "Gradual stiffness and locking over 5 years.",
-            "location_pain": "Global elbow joint line.",
-            "onset_pain": "Chronic insidious progression over years.",
-            "type_pain": "Dull deep joint ache, mechanical clicking at end-range.",
-            "aggravating_factors": "Heavy lifting, terminal extension and flexion.",
-            "easing_factors": "Warmth, light unweighted movement.",
-            "radiation": "Forearm.",
-            "red_flags": "Loss of end-range extension and flexion.",
-            "social_history": "Retired jackhammer operator.",
-            "past_medical_history": "Systemic OA.",
-            "diff_dx": "Osteoarthritis"
-        }
-    },
-    "Wrist and hand": {
-        "Case 1": {
-            "name": "Zachary", "region_label": "Wrist and hand", "forthcomingness": 4,
-            "demeanor": "Holding thumb-side of wrist, cradling hand.",
-            "chief_complaint": "Sharp wrist pain on the thumb side when picking up baby or wringing towels.",
-            "history_present_illness": "Developed 3 weeks postpartum, worsening with lifting infant under armpits.",
-            "location_pain": "Radial styloid process of wrist.",
-            "onset_pain": "Gradual onset over 3 weeks.",
-            "type_pain": "Sharp stabbing pain over radial styloid.",
-            "aggravating_factors": "Lifting baby, flexing thumb and bending wrist to ulnar side.",
-            "easing_factors": "Thumb spica splint, rest.",
-            "radiation": "Dorsal thumb and radial forearm.",
-            "red_flags": "No nerve tingling in fingers.",
-            "social_history": "New mother.",
-            "past_medical_history": "None.",
-            "diff_dx": "De-Quervains"
-        },
-        "Case 2": {
-            "name": "Abigail", "region_label": "Wrist and hand", "forthcomingness": 3,
-            "demeanor": "Holding ring finger straight, unable to bend tip.",
-            "chief_complaint": "Inability to bend the tip of the ring finger after tackling player in football.",
-            "history_present_illness": "Ring finger got caught in jersey 2 days ago during match.",
-            "location_pain": "Volar aspect of distal phalanx / DIP joint of 4th digit.",
-            "onset_pain": "Acute traumatic onset 48 hours ago.",
-            "type_pain": "Local tender ache, complete loss of active DIP flexion.",
-            "aggravating_factors": "Attempting to make a fist.",
-            "easing_factors": "Splinting finger in extension.",
-            "radiation": "None.",
-            "red_flags": "FDP tendon retraction; finger remains extended at DIP in resting cascade.",
-            "social_history": "Football player.",
-            "past_medical_history": "None.",
-            "diff_dx": "Jersey Finger"
-        },
-        "Case 3": {
-            "name": "Benjamin", "region_label": "Wrist and hand", "forthcomingness": 3,
-            "demeanor": "Demonstrating middle finger popping open with opposite hand.",
-            "chief_complaint": "Middle finger catches in palm when flexing and pops open painfully.",
-            "history_present_illness": "Started catching 1 month ago; requires unlocking manually in morning.",
-            "location_pain": "Palmar A1 pulley at 3rd metacarpal head.",
-            "onset_pain": "Insidious onset over 4 weeks.",
-            "type_pain": "Painful snap or popping sensation in palm.",
-            "aggravating_factors": "Gripping objects tight, making a fist.",
-            "easing_factors": "Passively straightening finger, warm water soak.",
-            "radiation": "Along palmar aspect of finger.",
-            "red_flags": "Tender nodule palpable over A1 pulley.",
-            "social_history": "Gardener.",
-            "past_medical_history": "Diabetes Mellitus.",
-            "diff_dx": "Trigger Finger"
-        },
-        "Case 4": {
-            "name": "Chloe", "region_label": "Wrist and hand", "forthcomingness": 3,
-            "demeanor": "Holding pinky side of wrist.",
-            "chief_complaint": "Ulnar-sided wrist pain and clicking when pushing up from a chair.",
-            "history_present_illness": "Fell on outstretched hand 6 weeks ago while gymnastics training.",
-            "location_pain": "Triangular fibrocartilage complex (ulnar fovea / distal to ulnar head).",
-            "onset_pain": "Subacute post-trauma 6 weeks ago.",
-            "type_pain": "Deep dull ulnar ache, sharp clicking with forearm rotation.",
-            "aggravating_factors": "Pushing up from chair, ulnar deviation, pronation/supination under load.",
-            "easing_factors": "Ulnar gutter splint, avoiding wrist loading.",
-            "radiation": "None.",
-            "red_flags": "Positive TFCC compression test; DRUJ stability intact.",
-            "social_history": "Gymnast.",
-            "past_medical_history": "None.",
-            "diff_dx": "TFCC Pathology"
-        },
-        "Case 5": {
-            "name": "Daniel", "region_label": "Wrist and hand", "forthcomingness": 3,
-            "demeanor": "Holding base of thumb with ice pack.",
-            "chief_complaint": "Weak pinch grip and sharp pain at inner base of thumb after ski pole fell out of hand.",
-            "history_present_illness": "Ski pole caught thumb 3 days ago, twisting it outward.",
-            "location_pain": "Ulnar collateral ligament of 1st MCP joint.",
-            "onset_pain": "Acute valgus stress trauma 3 days ago.",
-            "type_pain": "Sharp pain on pinching, localized swelling at inner thumb MCP joint.",
-            "aggravating_factors": "Pinching paper, opening door handles, twisting keys.",
-            "easing_factors": "Immobilizing thumb in spica.",
-            "radiation": "None.",
-            "red_flags": "Valgus stress testing shows significant joint opening.",
-            "social_history": "Skier.",
-            "past_medical_history": "None.",
-            "diff_dx": "Thumb UCL"
-        },
-        "Case 6": {
-            "name": "Emily", "region_label": "Wrist and hand", "forthcomingness": 2,
-            "demeanor": "Wearing elastic wrist wrap, cautious of thumb movement.",
-            "chief_complaint": "Deep wrist ache in anatomical snuffbox after falling on outstretched hand 1 week ago.",
-            "history_present_illness": "Fell 7 days ago; thought it was a simple wrist sprain.",
-            "location_pain": "Anatomical snuffbox / scaphoid tubercle.",
-            "onset_pain": "Acute trauma 7 days ago.",
-            "type_pain": "Deep dull wrist ache, sharp with thumb loading.",
-            "aggravating_factors": "Gripping, weight-bearing on extended palm, axial loading of thumb.",
-            "easing_factors": "Resting wrist, immobilization.",
-            "radiation": "Radial side of wrist.",
-            "red_flags": "Focal point tenderness over scaphoid in anatomical snuffbox.",
-            "social_history": "Snowboarder.",
-            "past_medical_history": "None.",
-            "diff_dx": "Scaphoid Fracture"
-        }
-    },
-    "Hip": {
-        "Case 1": {
-            "name": "Frank", "region_label": "Hip", "forthcomingness": 3,
-            "demeanor": "Sits on edge of chair / cushion to avoid sitting on ischial tuberosity.",
-            "chief_complaint": "Deep buttock pain right over sit-bone when sitting long hours or running hills.",
-            "history_present_illness": "Developed gradually over 3 months during marathon training.",
-            "location_pain": "Ischial tuberosity of deep buttock.",
-            "onset_pain": "Insidious onset over 12 weeks.",
-            "type_pain": "Deep localized dull ache, sharp catching with deep hip flexion.",
-            "aggravating_factors": "Sitting on hard chairs, running uphill, lunging.",
-            "easing_factors": "Standing, sitting on donut cushion.",
-            "radiation": "Proximal posterior thigh.",
-            "red_flags": "Lumbar spine screen normal; sciatic nerve conduction clear.",
-            "social_history": "Marathon runner, accountant.",
-            "past_medical_history": "None.",
-            "diff_dx": "Proximal Hamstring Tendinopathy"
-        },
-        "Case 2": {
-            "name": "Grace", "region_label": "Hip", "forthcomingness": 3,
-            "demeanor": "Holding lower abdomen / inner groin.",
-            "chief_complaint": "Sharp lower abdominal and inner groin pain during twisting and kicking.",
-            "history_present_illness": "Pain onset 1 month ago during soccer match when twisting off planted foot.",
-            "location_pain": "Pubic tubercle and inguinal canal region.",
-            "onset_pain": "Subacute onset 4 weeks ago.",
-            "type_pain": "Sharp tearing groin pain with high-intensity load.",
-            "aggravating_factors": "Sprinting, cutting, sit-ups, squeezing knees together.",
-            "easing_factors": "Rest, avoiding explosive sprinting.",
-            "radiation": "Medial thigh and lower rectus abdominis.",
-            "red_flags": "No palpable hernia sac or abdominal wall defect.",
-            "social_history": "Soccer player.",
-            "past_medical_history": "None.",
-            "diff_dx": "Athletic Pubalgia"
-        },
-        "Case 3": {
-            "name": "Henry", "region_label": "Hip", "forthcomingness": 4,
-            "demeanor": "Touching lateral aspect of outer hip bone.",
-            "chief_complaint": "Outer hip pain when lying on affected side at night and walking up stairs.",
-            "history_present_illness": "Developed over 2 months after starting a walking program.",
-            "location_pain": "Greater trochanter of lateral hip.",
-            "onset_pain": "Insidious onset over 8 weeks.",
-            "type_pain": "Sharp tenderness over outer bone, dull ache down lateral thigh.",
-            "aggravating_factors": "Lying directly on hip in bed, single-leg stance, stairs.",
-            "easing_factors": "Sleeping with pillow between knees, ice.",
-            "radiation": "Lateral thigh to knee.",
-            "red_flags": "Hip joint internal rotation is smooth and painless.",
-            "social_history": "Walker, teacher.",
-            "past_medical_history": "None.",
-            "diff_dx": "Greater Trochanteric Pain Syndrome"
-        },
-        "Case 4": {
-            "name": "Isabel", "region_label": "Hip", "forthcomingness": 3,
-            "demeanor": "Making a 'C-shape' with hand around anterior/lateral hip.",
-            "chief_complaint": "Sharp pinch in deep groin when squatting or getting out of car.",
-            "history_present_illness": "Groin pinch developed over 4 months in young active individual.",
-            "location_pain": "Anterior hip joint capsule / groin ('C-sign').",
-            "onset_pain": "Gradual onset over 16 weeks.",
-            "type_pain": "Sharp catching deep in front of hip joint.",
-            "aggravating_factors": "Deep hip flexion, internal rotation, prolonged sitting in low chair.",
-            "easing_factors": "Standing, keeping hip in neutral alignment.",
-            "radiation": "Anterior thigh.",
-            "red_flags": "FADIR test positive (reproduces deep groin pain).",
-            "social_history": "Crossfit athlete.",
-            "past_medical_history": "Cam morphology on prior X-ray.",
-            "diff_dx": "FAI"
-        },
-        "Case 5": {
-            "name": "Jack", "region_label": "Hip", "forthcomingness": 3,
-            "demeanor": "Older adult, limping, rubbing front groin area.",
-            "chief_complaint": "Deep groin stiffness and difficulty tying shoes or putting on socks.",
-            "history_present_illness": "Aching stiffness worsening progressively over 2 years.",
-            "location_pain": "Anterior groin and deep hip joint.",
-            "onset_pain": "Chronic insidious progression over 24 months.",
-            "type_pain": "Dull deep grinding ache, morning stiffness lasting 30 minutes.",
-            "aggravating_factors": "Weight-bearing after sitting, squatting, getting out of car.",
-            "easing_factors": "Warm showers, light unweighted movement.",
-            "radiation": "Down anterior thigh to knee.",
-            "red_flags": "Loss of passive hip internal rotation.",
-            "social_history": "Retired farmer.",
-            "past_medical_history": "Bilateral knee OA.",
-            "diff_dx": "Osteoarthritis"
-        },
-        "Case 6": {
-            "name": "Karen", "region_label": "Hip", "forthcomingness": 4,
-            "demeanor": "Sprinter, pointing to front fold of hip.",
-            "chief_complaint": "Sharp pull in front crease of hip when driving knee up high while sprinting.",
-            "history_present_illness": "Felt sharp pain 3 days ago sprinting off track blocks.",
-            "location_pain": "Anterior hip crease (iliopsoas / rectus femoris origin).",
-            "onset_pain": "Acute event 3 days ago.",
-            "type_pain": "Sharp pain on hip flexion, tender muscle belly.",
-            "aggravating_factors": "Driving knee up against resistance, stretching hip into extension.",
-            "easing_factors": "Rest, keeping hip slightly flexed, ice.",
-            "radiation": "Down anterior thigh.",
-            "red_flags": "No palpable mass; hip joint internal rotation painless.",
-            "social_history": "Track sprinter.",
-            "past_medical_history": "None.",
-            "diff_dx": "Hip Flexor Strain"
-        }
-    },
-    "Knee": {
-        "Case 1": {
-            "name": "Liam", "region_label": "Knee", "forthcomingness": 4,
-            "demeanor": "Young woman, pointing around kneecap.",
-            "chief_complaint": "Dull ache around and behind kneecap when sitting long hours or running downhill.",
-            "history_present_illness": "Vague kneecap ache started 2 months ago after increasing running mileage.",
-            "location_pain": "Peripatellar / retro-patellar region.",
-            "onset_pain": "Insidious onset 8 weeks ago.",
-            "type_pain": "Diffuse aching 'movie theater sign' ache.",
-            "aggravating_factors": "Sitting flexed long hours, running downhill, stairs.",
-            "easing_factors": "Straightening leg, quadriceps strengthening, ice.",
-            "radiation": "Around kneecap.",
-            "red_flags": "Zero joint swelling, no true locking.",
-            "social_history": "Marathon trainee.",
-            "past_medical_history": "None.",
-            "diff_dx": "Patellofemoral Pain Syndrome"
-        },
-        "Case 2": {
-            "name": "Michael", "region_label": "Knee", "forthcomingness": 3,
-            "demeanor": "Holding medial knee joint line.",
-            "chief_complaint": "Inner knee joint line pain with painful clicking and locking when squatting.",
-            "history_present_illness": "Twisted knee 3 weeks ago while stepping down off ladder.",
-            "location_pain": "Medial joint line of knee.",
-            "onset_pain": "Subacute post-twist 3 weeks ago.",
-            "type_pain": "Sharp catching pain at joint line, delayed swelling.",
-            "aggravating_factors": "Deep squatting, twisting on planted foot, stairs.",
-            "easing_factors": "Keeping knee straight, ice.",
-            "radiation": "Medial joint line.",
-            "red_flags": "Occasional true joint locking where knee cannot fully straighten.",
-            "social_history": "Electrician.",
-            "past_medical_history": "None.",
-            "diff_dx": "Meniscal Tear"
-        },
-        "Case 3": {
-            "name": "Elena", "region_label": "Knee", "forthcomingness": 3,
-            "demeanor": "Guarding knee, on crutches.",
-            "chief_complaint": "Right knee instability and feeling of joint giving way after hearing a loud 'pop'.",
-            "history_present_illness": "Pivoted quickly in soccer match yesterday, felt loud pop with immediate rapid joint swelling.",
-            "location_pain": "Deep inside knee joint.",
-            "onset_pain": "Acute traumatic onset 24 hours ago.",
-            "type_pain": "Throbbing, deep ache with sharp catch upon weight-bearing.",
-            "aggravating_factors": "Bearing weight, twisting, attempting extension.",
-            "easing_factors": "Crutches, ice, elevation.",
-            "radiation": "Localized to joint.",
-            "red_flags": "Lachman test and anterior drawer test strongly positive.",
-            "social_history": "Soccer athlete.",
-            "past_medical_history": "None.",
-            "diff_dx": "ACL Sprain"
-        },
-        "Case 4": {
-            "name": "Nina", "region_label": "Knee", "forthcomingness": 3,
-            "demeanor": "Holding anterior upper shin area.",
-            "chief_complaint": "Posterior knee ache and instability when walking down stairs after dashboard injury.",
-            "history_present_illness": "Direct impact to front of flexed shin in car crash 2 weeks ago.",
-            "location_pain": "Posterior popliteal fossa / upper tibia.",
-            "onset_pain": "Acute post-trauma 14 days ago.",
-            "type_pain": "Dull posterior knee pain, feeling of sag.",
-            "aggravating_factors": "Walking down steep slopes, deceleration, kneeling.",
-            "easing_factors": "Resting knee in mild extension.",
-            "radiation": "Calf.",
-            "red_flags": "Posterior sag sign positive.",
-            "social_history": "Sales manager.",
-            "past_medical_history": "None.",
-            "diff_dx": "PCL Sprain"
-        },
-        "Case 5": {
-            "name": "Oscar", "region_label": "Knee", "forthcomingness": 4,
-            "demeanor": "Senior citizen, cheerful, rubbing inner knee.",
-            "chief_complaint": "Deep knee stiffness and grinding when climbing stairs or getting up from chairs.",
-            "history_present_illness": "Gradual worsening of morning knee stiffness over 3 years.",
-            "location_pain": "Bilateral medial joint line and patellofemoral joint.",
-            "onset_pain": "Chronic insidious progression over 36 months.",
-            "type_pain": "Deep aching sore pain, morning stiffness lasting 20 minutes.",
-            "aggravating_factors": "Stairs, squatting, prolonged sitting, cold weather.",
-            "easing_factors": "Warm compress, gentle unweighted movement.",
-            "radiation": "None.",
-            "red_flags": "Visible genu varum deformity; crepitus on passive movement.",
-            "social_history": "Retired teacher.",
-            "past_medical_history": "Hypertension.",
-            "diff_dx": "Osteoarthritis"
-        },
-        "Case 6": {
-            "name": "Patricia", "region_label": "Knee", "forthcomingness": 3,
-            "demeanor": "Teenage athlete, hesitant to allow patellar touch.",
-            "chief_complaint": "Feeling that kneecap shifted outward and popped out of place when twisting.",
-            "history_present_illness": "Twisted leg 3 days ago; kneecap visibly displaced laterally before sliding back in.",
-            "location_pain": "Medial patellar retinaculum / lateral femoral condyle.",
-            "onset_pain": "Acute event 72 hours ago.",
-            "type_pain": "Sharp apprehension and localized medial pain.",
-            "aggravating_factors": "Quadriceps contraction, pushing kneecap laterally.",
-            "easing_factors": "Knee extension immobilizer, ice.",
-            "radiation": "Anterior knee.",
-            "red_flags": "Patellar apprehension test positive.",
-            "social_history": "Dancer.",
-            "past_medical_history": "Generalized hypermobility.",
-            "diff_dx": "Patellar Instability"
-        }
-    },
-    "Ankle and foot": {
-        "Case 1": {
-            "name": "Ryan", "region_label": "Ankle and foot", "forthcomingness": 4,
-            "demeanor": "Runner, touching inner border of shin bone.",
-            "chief_complaint": "Diffuse aching pain along the inner lower shin bone after increasing running volume.",
-            "history_present_illness": "Ache started 3 weeks ago; worsens toward end of runs.",
-            "location_pain": "Posteromedial border of distal third of tibia.",
-            "onset_pain": "Gradual onset over 21 days.",
-            "type_pain": "Diffuse dull ache along bone ridge.",
-            "aggravating_factors": "Running on hard pavement, jumping, dorsiflexing ankle.",
-            "easing_factors": "Rest, ice along shin border.",
-            "radiation": "Down inner shin.",
-            "red_flags": "No focal point bone tenderness.",
-            "social_history": "Cross-country runner.",
-            "past_medical_history": "Overpronation.",
-            "diff_dx": "Tibial Stress Syndrome"
-        },
-        "Case 2": {
-            "name": "Sophia", "region_label": "Ankle and foot", "forthcomingness": 3,
-            "demeanor": "Military cadet, holding tight anterolateral shin.",
-            "chief_complaint": "Tightness, fullness, and foot numbness that occurs strictly 15 minutes into running and resolves completely with rest.",
-            "history_present_illness": "Recurrent pattern over past 2 months during conditioning marches.",
-            "location_pain": "Anterolateral muscular compartment of lower leg.",
-            "onset_pain": "Exercise-induced predictable onset.",
-            "type_pain": "Ischemic tight squeezing pressure, dorsal foot numbness.",
-            "aggravating_factors": "Sustained high-intensity running.",
-            "easing_factors": "Stopping exercise completely for 20 minutes.",
-            "radiation": "Dorsum of foot.",
-            "red_flags": "Symptoms clear completely at rest.",
-            "social_history": "Military recruit.",
-            "past_medical_history": "None.",
-            "diff_dx": "Exertional Compartment Syndrome"
-        },
-        "Case 3": {
-            "name": "Lucas", "region_label": "Ankle and foot", "forthcomingness": 3,
-            "demeanor": "Limping, wearing elastic ankle sleeve.",
-            "chief_complaint": "Outer ankle swelling and bruising after rolling ankle inward playing basketball.",
-            "history_present_illness": "Inverted ankle 2 days ago; immediate lateral swelling.",
-            "location_pain": "Anterior talofibular ligament (ATFL) lateral ankle.",
-            "onset_pain": "Acute inversion trauma 48 hours ago.",
-            "type_pain": "Sharp pain on weight-bearing, dull throbbing at rest.",
-            "aggravating_factors": "Inverting foot, walking on uneven ground.",
-            "easing_factors": "Rest, Ice, Compression, Elevation.",
-            "radiation": "Lateral foot.",
-            "red_flags": "Ottawa Ankle Rules negative.",
-            "social_history": "Basketball player.",
-            "past_medical_history": "Prior ankle sprain 2 years ago.",
-            "diff_dx": "Lateral Ankle Sprain"
-        },
-        "Case 4": {
-            "name": "Oliver", "region_label": "Ankle and foot", "forthcomingness": 3,
-            "demeanor": "Hockey player, non-weight bearing on foot.",
-            "chief_complaint": "Severe pain above the ankle joint line after foot was twisted outward in tackle.",
-            "history_present_illness": "Foot forced into external rotation 4 days ago during game.",
-            "location_pain": "Anterior inferior tibiofibular syndesmosis.",
-            "onset_pain": "Acute external rotation trauma 4 days ago.",
-            "type_pain": "Sharp severe pain above ankle, total inability to bear weight.",
-            "aggravating_factors": "External rotation of foot, ankle dorsiflexion.",
-            "easing_factors": "Rigid boot, non-weight bearing with crutches.",
-            "radiation": "Up lower leg shin.",
-            "red_flags": "Squeeze test and external rotation stress test positive.",
-            "social_history": "Hockey player.",
-            "past_medical_history": "None.",
-            "diff_dx": "High Ankle Sprain"
-        },
-        "Case 5": {
-            "name": "Penelope", "region_label": "Ankle and foot", "forthcomingness": 4,
-            "demeanor": "Wincing during initial steps across the room.",
-            "chief_complaint": "Agonizing sharp heel pain during the very first steps out of bed in the morning.",
-            "history_present_illness": "Heel pain started 2 months ago after standing long hours on concrete floors in flat shoes.",
-            "location_pain": "Plantar aspect of calcaneal medial tubercle.",
-            "onset_pain": "Gradual onset over 8 weeks.",
-            "type_pain": "Sharp knife-like pain initially, eases into dull ache after 10 minutes walking.",
-            "aggravating_factors": "First steps in morning, standing after sitting, barefoot on tile.",
-            "easing_factors": "Moderate walking warm-up, supportive arch shoes, frozen bottle rolling.",
-            "radiation": "Medial foot arch.",
-            "red_flags": "No calf swelling; no systemic joint swelling.",
-            "social_history": "Retail manager.",
-            "past_medical_history": "BMI 29.",
-            "diff_dx": "Plantar Fasciopathy"
         }
     }
 }
@@ -806,8 +234,9 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "is_admin" not in st.session_state:
     st.session_state.is_admin = False
-if "case_library" not in st.session_state:
-    st.session_state.case_library = load_cases_from_disk()
+
+# Force load from default if cases.json contains obsolete data
+st.session_state.case_library = load_cases_from_disk()
 
 if "differentials_submitted" not in st.session_state:
     st.session_state.differentials_submitted = False
@@ -869,7 +298,7 @@ def build_patient_instructions(c):
         f"PAST MEDICAL HISTORY: {c['past_medical_history']}\n\n"
         f"INSTRUCTIONS FOR CHAT:\n"
         f"- Stay in character as {c['name']} at all times.\n"
-        f"- ABSOLUTE RULE: DO NOT reveal your medical diagnosis, pathology name, or anatomical code to the student.\n"
+        f"- ABSOLUTE RULE: DO NOT reveal your medical diagnosis, medical terminology, or anatomical code to the student.\n"
         f"- Describe symptoms naturally in everyday layperson terms.\n"
         f"- Strictly adhere to your COMMUNICATION STYLE level specified above."
     )
@@ -888,7 +317,7 @@ if not st.session_state.ccid:
             st.warning("A valid CCID sequence is mandatory.")
     st.stop()
 
-# --- STAGE 2: NAVIGATION & ADMIN BACKDOOR SIDEBAR ---
+# --- STAGE 2: NAVIGATION & ADMIN SIDEBAR ---
 st.sidebar.title("🩺 Control Center")
 st.sidebar.markdown(f"**Active User ID:** `{st.session_state.ccid}`")
 
@@ -932,6 +361,7 @@ if role == "Admin/Instructor Editor":
     with cat_col:
         selected_category = st.selectbox("1. Select Joint Domain:", list(st.session_state.case_library.keys()))
     with case_col:
+        # STRICT DISPLAY: Case Number + Patient Name ONLY
         selected_case_key = st.selectbox(
             "2. Select Patient Case:", 
             list(st.session_state.case_library[selected_category].keys()),
@@ -1002,7 +432,7 @@ if role == "Admin/Instructor Editor":
                 "diff_dx": e_diff
             })
             save_cases_to_disk(st.session_state.case_library)
-            st.success(f"Case '{selected_case_key}' ({e_name}) in {selected_category} permanently saved!")
+            st.success(f"Case '{selected_case_key}' ({e_name}) saved!")
 
     st.markdown("---")
     with st.expander("⚠️ Danger Zone: Revert to Factory Defaults"):
@@ -1022,6 +452,7 @@ else:
     with col_cat:
         student_category = st.selectbox("Select Joint Category:", list(st.session_state.case_library.keys()))
     with col_case:
+        # STRICT DISPLAY: Case Number + Patient Name ONLY
         student_case_key = st.selectbox(
             "Select Patient Case:", 
             list(st.session_state.case_library[student_category].keys()),
@@ -1037,6 +468,7 @@ else:
         st.session_state.submitted_differentials = ["", "", ""]
         st.session_state.last_chosen_case_id = unique_case_id
 
+    # STRICT HEADER DISPLAY: Case Identifier and Patient Name ONLY
     st.info(f"📋 **Active Encounter:** {student_category} ({student_case_key}) — Patient Name: **{active_case['name']}**")
     
     # Display Chat Messages
