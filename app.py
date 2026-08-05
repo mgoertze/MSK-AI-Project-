@@ -21,17 +21,117 @@ OBJECTIVE_CATEGORIES = [
     "Special Tests"
 ]
 
-# --- DEFAULT DETAILED OBJECTIVE FINDINGS TEMPLATE ---
-def get_default_objective_template():
-    return {
-        "Observation": "Postural alignment: Forward posture with mild muscle guarding. Asymmetry observed on affected side.",
-        "Active Range of Motion (AROM)": "Flexion: 120° with painful arc (Full = 180°). Extension: 45° pain-free. Abduction: 90° painful. Internal Rotation: 60°. External Rotation: 45°.",
-        "Passive Range of Motion (PROM)": "Flexion: 140° pain at end-range. Extension: Full, pain-free. Abduction: 110° painful. Internal Rotation: Full. External Rotation: Full with end-range discomfort.",
-        "Strength / Resisted Isometrics": "Flexion: 4/5 painful. Extension: 5/5 pain-free. Abduction: 3+/5 painful. Internal Rotation: 5/5 pain-free. External Rotation: 4-/5 painful.",
-        "Functional Testing": "Overhead reaching test: Reproduces primary complaint at 90°. Hand-behind-back reach: Mildly restricted at L3 level.",
-        "Palpation": "Supraspinatus tendon insertion at greater tubercle: Markedly tender. Bicipital groove: Non-tender. Acromioclavicular joint: Non-tender. Upper trapezius: Hypertonic with active trigger point.",
-        "Special Tests": "Hawkins-Kennedy Test: Positive (reproduces anterior shoulder pain). Neer Impingement Test: Positive. Empty Can (Jobe) Test: Positive for weakness and pain. Apprehension Test: Negative."
-    }
+# --- REGION-SPECIFIC DEFAULT OBJECTIVE FINDINGS TEMPLATES ---
+def get_default_objective_template_for_region(region_name):
+    r = str(region_name).lower()
+    
+    # 1. CERVICAL SPINE
+    if "cervical" in r or "neck" in r:
+        return {
+            "Observation": "Forward head posture, protracted shoulder girdle, hypertonic upper trapezius visual bulk.",
+            "Active Range of Motion (AROM)": "Flexion: 40° (Full = 50°). Extension: 45° (Full = 60°). Left Rotation: 60° painful at end-range (Full = 80°). Right Rotation: 70°. Side Bending B/L: 30° painful.",
+            "Passive Range of Motion (PROM)": "Flexion: Full range with tissue-stretch end-feel. Extension: Full range. Rotation: 70° with muscular tightness end-feel.",
+            "Strength / Resisted Isometrics": "Cervical Flexion: 4/5 painful. Cervical Extension: 5/5 pain-free. Cervical Side Bending B/L: 4+/5. Deep Cervical Flexors (CCFT): Impaired endurance.",
+            "Functional Testing": "Sustained Neck Flexion (Desk posture simulation): Reproduces familiar neck/upper back ache at 60 seconds.",
+            "Palpation": "Cervical Paraspinals (C4-C6): Moderately tender. Upper Trapezius & Levator Scapulae: Markedly tender with active trigger points. Spinous processes: Non-tender.",
+            "Special Tests": "Spurling Test: Positive for localized neck pain (Negative for arm radiculopathy). Cervical Distraction Test: Reduces feeling of heaviness. Upper Limb Tension Tests (ULTT 1/Median): Negative."
+        }
+    
+    # 2. LUMBAR SPINE
+    elif "lumbar" in r or "back" in r:
+        return {
+            "Observation": "Flattened lumbar lordosis, antalgic posture, guarded transfer movements.",
+            "Active Range of Motion (AROM)": "Flexion: 40° painful (Finger-to-floor distance 25cm). Extension: 10° painful. Side Bending B/L: 15° restricted.",
+            "Passive Range of Motion (PROM)": "Flexion: Limited by muscle guarding. Extension: Limited with firm end-feel.",
+            "Strength / Resisted Isometrics": "Lumbar Extension: 4/5 painful. Hip Flexion B/L: 5/5. Knee Extension (L4): 5/5. Great Toe Extension (L5): 5/5. Plantarflexion (S1): 5/5.",
+            "Functional Testing": "Sit-to-Stand transfer: Slow, uses arms for assistance. Repeated Forward Bending: Increases lumbar pain.",
+            "Palpation": "Lumbar Erector Spinae (L3-L5): Bilateral hypertonicity and tenderness. Quadratus Lumborum: Moderately tender. L4/L5 Spinous processes: Mildly tender.",
+            "Special Tests": "Straight Leg Raise (SLR): Negative for radicular shooting pain below knee. Slump Test: Negative. Lumbar Quadrant Test: Reproduces localized L/S pain."
+        }
+    
+    # 3. SHOULDER
+    elif "shoulder" in r:
+        return {
+            "Observation": "Slight anterior hitch of humeral head, mild sulcus asymmetry, muscle guarding.",
+            "Active Range of Motion (AROM)": "Flexion: 130° painful (Full = 180°). Abduction: 90° with painful arc between 60-120°. External Rotation: 50°. Internal Rotation: 45°.",
+            "Passive Range of Motion (PROM)": "Flexion: 150° end-range discomfort. Abduction: 130° painful. External Rotation: Full. Internal Rotation: Full.",
+            "Strength / Resisted Isometrics": "Flexion: 4/5. Abduction: 3+/5 painful. External Rotation: 4-/5 painful. Internal Rotation: 5/5 pain-free.",
+            "Functional Testing": "Overhead reaching test: Reproduces primary pain at 90°. Hand-behind-back reach: Limited to L4 level.",
+            "Palpation": "Supraspinatus insertion at greater tubercle: Markedly tender. Bicipital groove: Non-tender. AC Joint: Non-tender.",
+            "Special Tests": "Hawkins-Kennedy Test: Positive. Neer Impingement Test: Positive. Empty Can (Jobe) Test: Positive for weakness and pain. Apprehension Test: Negative."
+        }
+
+    # 4. ELBOW
+    elif "elbow" in r:
+        return {
+            "Observation": "Carrying angle normal (10-15°), no gross joint effusion, holding arm guarded in 90° flexion.",
+            "Active Range of Motion (AROM)": "Flexion: 135° (Full = 145°). Extension: -5° (Full = 0°). Pronation: 80°. Supination: 75°.",
+            "Passive Range of Motion (PROM)": "Flexion: Full with soft tissue-approximation. Extension: Full with hard end-feel.",
+            "Strength / Resisted Isometrics": "Wrist Extension (Cozen's): 3+/5 painful. Wrist Flexion: 5/5 pain-free. Elbow Flexion: 5/5. Elbow Extension: 5/5.",
+            "Functional Testing": "Grip strength testing (Dynamometer): Significantly reduced on affected side due to pain at elbow.",
+            "Palpation": "Lateral Epicondyle: Exquisitely tender to touch. Medial Epicondyle: Non-tender. Radial Head: Non-tender.",
+            "Special Tests": "Cozen's Test (Resisted Wrist Extension): Positive. Mill's Test (Passive Wrist Flexion/Pronation): Positive. Golfer's Elbow Test: Negative."
+        }
+
+    # 5. WRIST AND HAND
+    elif "wrist" in r or "hand" in r:
+        return {
+            "Observation": "Mild localized swelling over radial wrist, normal muscle bulk in thenar/hypothenar eminences.",
+            "Active Range of Motion (AROM)": "Wrist Flexion: 60° (Full = 80°). Wrist Extension: 55° (Full = 70°). Radial Deviation: 10° painful (Full = 20°). Ulnar Deviation: 20°.",
+            "Passive Range of Motion (PROM)": "Wrist Flexion/Extension: Full. Radial Deviation: Limited by sharp localized pain.",
+            "Strength / Resisted Isometrics": "Resisted Thumb Abduction: 4/5 painful. Grip Strength: 80% of unaffected side.",
+            "Functional Testing": "Pinch grip test (Key & Tip pinch): Reproduces thumb-side wrist pain. Jar opening: Unable due to sharp pain.",
+            "Palpation": "1st Dorsal Compartment (Abductor Pollicis Longus / Extensor Pollicis Brevis tendons): Highly tender. Anatomical Snuffbox: Non-tender.",
+            "Special Tests": "Finkelstein's Test: Positive (sharp pain over radial styloid). Eichhoff's Test: Positive. Tinel's at Carpal Tunnel: Negative."
+        }
+
+    # 6. HIP
+    elif "hip" in r:
+        return {
+            "Observation": "Antalgic gait with shortened stance phase on affected side, Trendelenburg sign negative.",
+            "Active Range of Motion (AROM)": "Flexion: 100° painful (Full = 120°). Extension: 10° (Full = 20°). Abduction: 30° painful. Internal Rotation: 15° limited (Full = 45°). External Rotation: 35°.",
+            "Passive Range of Motion (PROM)": "Flexion: 110° with hard/capsular end-feel. Internal Rotation: 20° with deep groin pinching.",
+            "Strength / Resisted Isometrics": "Hip Abduction: 4/5 painful. Hip Flexion: 4+/5. Hip Extension: 5/5. Internal Rotation: 4/5 painful.",
+            "Functional Testing": "Single-Leg Stance: Stable for 10s. Deep Squat: Limited to 60° knee bend due to groin pinching.",
+            "Palpation": "Greater Trochanter: Moderately tender. Deep Groin / Femoral Triangle: Tender to deep palpation. Ischial Tuberosity: Non-tender.",
+            "Special Tests": "FADDIR Test (Flexion, Adduction, Internal Rotation): Positive for deep groin pain. FABER / Patrick's Test: Positive for lateral/groin pain. Thomas Test: Positive for hip flexor tightness."
+        }
+
+    # 7. KNEE
+    elif "knee" in r:
+        return {
+            "Observation": "Mild intra-articular joint effusion (1+ sweep test), no visible alignment deformity (Genu Varum/Valgum normal).",
+            "Active Range of Motion (AROM)": "Flexion: 115° painful (Full = 135°). Extension: -5° lack of full extension.",
+            "Passive Range of Motion (PROM)": "Flexion: 125° with tissue-stretch end-feel. Extension: 0° with springy block end-feel.",
+            "Strength / Resisted Isometrics": "Quadriceps (Knee Extension): 4/5 painful. Hamstrings (Knee Flexion): 5/5 pain-free.",
+            "Functional Testing": "Single-leg Hop: Hesitant, unable to perform smoothly. Step-down test: Painful at 45° flexion.",
+            "Palpation": "Medial Joint Line: Point tender. Patellar Tendon: Non-tender. Lateral Joint Line: Non-tender. Anserine Bursa: Non-tender.",
+            "Special Tests": "McMurray Test: Positive for medial joint line click/pain. Lachman Test: Negative (Firm end-point). Anterior Drawer: Negative. Patellar Apprehension: Negative."
+        }
+
+    # 8. ANKLE AND FOOT
+    elif "ankle" in r or "foot" in r:
+        return {
+            "Observation": "Ecchymosis and edema localized below lateral malleolus, antalgic gait favoring heel-strike.",
+            "Active Range of Motion (AROM)": "Dorsiflexion: 10° (Full = 20°). Plantarflexion: 35° (Full = 50°). Inversion: 15° painful (Full = 30°). Eversion: 15°.",
+            "Passive Range of Motion (PROM)": "Inversion: Limited by sharp pain over lateral ligaments. Dorsiflexion: Limited by Achilles tightness.",
+            "Strength / Resisted Isometrics": "Ankle Eversion (Peroneals): 4/5. Inversion: 4/5 painful. Plantarflexion (Gastrocnemius): 5/5.",
+            "Functional Testing": "Single-leg Heel Raise: Able to perform 3 reps with mild wobble. Tandem gait: Unstable.",
+            "Palpation": "Anterior Talofibular Ligament (ATFL): Highly tender. Calcaneofibular Ligament (CFL): Moderately tender. Lateral Malleolus Bone: Non-tender.",
+            "Special Tests": "Anterior Drawer Test (Ankle): Positive for mild laxity compared to contralateral side. Talar Tilt Test: Positive for pain. Thompson Squeeze Test: Negative (Achilles intact)."
+        }
+        
+    # GENERAL FALLBACK
+    else:
+        return {
+            "Observation": "Postural alignment: Guarded position. Slight asymmetry noted on affected side.",
+            "Active Range of Motion (AROM)": "Flexion: 75% available with pain at end-range. Extension: Full, pain-free. Lateral movements: Mildly restricted.",
+            "Passive Range of Motion (PROM)": "Flexion: Full range with tissue-stretch end-feel and mild discomfort. Extension: Unrestricted.",
+            "Strength / Resisted Isometrics": "Primary movers: 4/5 with pain elicited on strong contraction. Surrounding stabilizers: 5/5 non-tender.",
+            "Functional Testing": "Functional movement test: Reproduces primary complaint at end-range loading.",
+            "Palpation": "Point tenderness noted over local tendinous insertion. Surrounding muscular hypertonicity present.",
+            "Special Tests": "Primary provocative test: Positive. Secondary stability tests: Negative."
+        }
 
 # --- DEFAULT FULL CASE LIBRARY ---
 DEFAULT_CASE_LIBRARY = {
@@ -50,25 +150,46 @@ DEFAULT_CASE_LIBRARY = {
             "red_flags": "Denies upper extremity numbness, weakness, or clumsiness.",
             "social_history": "Software developer, works 10-hour days.",
             "past_medical_history": "None.",
-            "diff_dx": "Mechanical Neck Pain (Postural Strain)",
-            "objective_data": {
-                "Observation": "Forward head posture, protracted scapulae bilaterally, hypertonic upper trapezius visual bulk.",
-                "Active Range of Motion (AROM)": "Flexion: Full range, mild posterior tightness. Extension: Full range, pain-free. Left Rotation: 70° (Full = 80°). Right Rotation: 70° (Full = 80°). Side Bending B/L: 35° (Full = 45°) with end-range muscle tightness.",
-                "Passive Range of Motion (PROM)": "Flexion: Full range with tissue-stretch end-feel. Extension: Full range, normal tissue-approximation. Rotation B/L: Full range with muscular tightness end-feel.",
-                "Strength / Resisted Isometrics": "Cervical Flexion: 4/5 non-painful. Cervical Extension: 5/5 pain-free. Cervical Side Bending B/L: 4+/5 non-painful. Deep Cervical Flexors (CCFT): Impaired endurance (12 seconds hold).",
-                "Functional Testing": "Sustained Neck Flexion (Desk posture simulation): Reproduces familiar mid-back and upper trap ache after 90 seconds.",
-                "Palpation": "Levator Scapulae insertion at superior angle of scapula: Moderately tender. Upper Trapezius muscle belly B/L: Markedly tender with active trigger points. C3-C5 Spinous processes & articular pillars: Non-tender.",
-                "Special Tests": "Spurling Test: Negative bilaterally. Cervical Distraction Test: Reduces feeling of heaviness/tightness. Upper Limb Tension Test A (Median): Negative bilaterally."
-            }
+            "diff_dx": "Mechanical Neck Pain (Postural Strain)"
+        }
+    },
+    "Shoulder": {
+        "Case 1": {
+            "name": "Sarah", "region_label": "Shoulder", "forthcomingness": 3,
+            "demeanor": "Holding right arm close to side, avoids overhead reach.",
+            "chief_complaint": "Anterior shoulder pain when reaching into upper cabinets.",
+            "history_present_illness": "Pain started 6 weeks ago after painting garage ceiling.",
+            "location_pain": "Anterolateral shoulder radiating down to mid-deltoid.",
+            "onset_pain": "Gradual onset over 6 weeks.",
+            "type_pain": "Sharp with overhead activity, dull ache at rest.",
+            "aggravating_factors": "Reaching overhead, dressing, lying on affected side.",
+            "easing_factors": "Rest, ice, holding arm supported.",
+            "radiation": "Lateral arm down to insertion of deltoid.",
+            "red_flags": "Denies neck pain, chest pain, or systemic weakness.",
+            "social_history": "Recreational tennis player, office worker.",
+            "past_medical_history": "None.",
+            "diff_dx": "Subacromial Pain Syndrome / Rotator Cuff Tendinopathy"
+        }
+    },
+    "Hip": {
+        "Case 1": {
+            "name": "Robert", "region_label": "Hip", "forthcomingness": 3,
+            "demeanor": "Walking with slight limp, rubs anterior groin when sitting.",
+            "chief_complaint": "Deep groin pinching pain when getting out of car or squatting.",
+            "history_present_illness": "Deep groin stiffness developed over 4 months.",
+            "location_pain": "Anterior groin and lateral hip ('C-sign').",
+            "onset_pain": "Insidious onset.",
+            "type_pain": "Deep pinching ache.",
+            "aggravating_factors": "Deep hip flexion, prolonged sitting, twisting on planted foot.",
+            "easing_factors": "Walking on flat ground, NSAIDs.",
+            "radiation": "Anterior thigh down toward knee.",
+            "red_flags": "Denies night pain, unexplained weight loss, or fever.",
+            "social_history": "Former recreational soccer player.",
+            "past_medical_history": "None.",
+            "diff_dx": "Femoroacetabular Impingement (FAI) / Labral Tear"
         }
     }
 }
-
-# Add default objective structure to fallback cases dynamically
-for region, cases in DEFAULT_CASE_LIBRARY.items():
-    for case_key, cdata in cases.items():
-        if "objective_data" not in cdata:
-            cdata["objective_data"] = get_default_objective_template()
 
 # --- DISK STORAGE FUNCTIONS ---
 def save_cases_to_disk(case_data):
@@ -85,18 +206,38 @@ def load_cases_from_disk():
                 data = json.load(f)
             
             for region, cases in data.items():
+                region_template = get_default_objective_template_for_region(region)
+                
                 for case_key, cdata in cases.items():
+                    # Validate that region match is accurate
                     if "objective_data" not in cdata:
-                        cdata["objective_data"] = get_default_objective_template()
+                        cdata["objective_data"] = region_template
                     else:
-                        for cat in OBJECTIVE_CATEGORIES:
-                            if cat not in cdata["objective_data"]:
-                                cdata["objective_data"][cat] = "No pathological findings recorded."
+                        # Auto-clean cross-contaminated baseline objective findings from legacy JSONs
+                        sp_tests = cdata["objective_data"].get("Special Tests", "")
+                        if "cervical" in region.lower() and "Hawkins" in sp_tests:
+                            cdata["objective_data"] = region_template
+                        elif "hip" in region.lower() and ("Hawkins" in sp_tests or "Spurling" in sp_tests):
+                            cdata["objective_data"] = region_template
+                        elif "knee" in region.lower() and ("Hawkins" in sp_tests or "Spurling" in sp_tests):
+                            cdata["objective_data"] = region_template
+                        elif "shoulder" in region.lower() and ("Spurling" in sp_tests or "FADDIR" in sp_tests):
+                            cdata["objective_data"] = region_template
+                        else:
+                            for cat in OBJECTIVE_CATEGORIES:
+                                if cat not in cdata["objective_data"]:
+                                    cdata["objective_data"][cat] = region_template.get(cat, "No pathological findings recorded.")
             return data
         except Exception:
             save_cases_to_disk(DEFAULT_CASE_LIBRARY)
             return DEFAULT_CASE_LIBRARY
     else:
+        # Build initial library with region-appropriate objective matrices
+        for region, cases in DEFAULT_CASE_LIBRARY.items():
+            region_template = get_default_objective_template_for_region(region)
+            for case_key, cdata in cases.items():
+                cdata["objective_data"] = region_template
+                
         save_cases_to_disk(DEFAULT_CASE_LIBRARY)
         return DEFAULT_CASE_LIBRARY
 
@@ -168,23 +309,22 @@ def match_objective_query(query_text, case_obj_data):
     """Maps custom typed student queries to specific objective findings."""
     q = query_text.strip().lower()
     
-    # Direct Category Match Keywords
-    if any(k in q for k in ["strength", "resisted", "mmt", "manual muscle"]):
+    # Category Keywords Matching
+    if any(k in q for k in ["strength", "resisted", "mmt", "manual muscle", "myotome"]):
         return "Strength / Resisted Isometrics", case_obj_data.get("Strength / Resisted Isometrics", "Normal strength.")
-    elif any(k in q for k in ["palpate", "palpation", "touch", "tenderness"]):
+    elif any(k in q for k in ["palpate", "palpation", "touch", "tenderness", "point"]):
         return "Palpation", case_obj_data.get("Palpation", "No specific point tenderness noted.")
-    elif any(k in q for k in ["special test", "provocative", "test"]):
+    elif any(k in q for k in ["special test", "provocative", "test", "spurling", "distraction", "hawkins", "faddir", "faber", "mcmurray", "slr", "lachman", "cozen", "finkelstein"]):
         return "Special Tests", case_obj_data.get("Special Tests", "Special tests negative.")
     elif any(k in q for k in ["prom", "passive"]):
         return "Passive Range of Motion (PROM)", case_obj_data.get("Passive Range of Motion (PROM)", "Full PROM.")
-    elif any(k in q for k in ["arom", "active range", "active motion", "flexion", "extension", "abduction", "rotation"]):
+    elif any(k in q for k in ["arom", "active range", "active motion", "flexion", "extension", "abduction", "rotation", "side bend"]):
         return "Active Range of Motion (AROM)", case_obj_data.get("Active Range of Motion (AROM)", "Full AROM.")
-    elif any(k in q for k in ["observe", "observation", "posture", "gait", "look"]):
+    elif any(k in q for k in ["observe", "observation", "posture", "gait", "look", "alignment"]):
         return "Observation", case_obj_data.get("Observation", "No gross abnormality.")
-    elif any(k in q for k in ["functional", "squat", "reach", "hop", "balance"]):
+    elif any(k in q for k in ["functional", "squat", "reach", "hop", "balance", "desk", "step"]):
         return "Functional Testing", case_obj_data.get("Functional Testing", "Functional movements intact.")
     else:
-        # Fallback search inside text of all objective categories
         for cat, content in case_obj_data.items():
             if q in content.lower() or any(term in content.lower() for term in q.split()):
                 return f"{cat} ({query_text.strip()})", content
@@ -261,7 +401,7 @@ if role == "Admin/Instructor Editor":
         
     case_data = st.session_state.case_library[selected_category][selected_case_key]
     if "objective_data" not in case_data:
-        case_data["objective_data"] = get_default_objective_template()
+        case_data["objective_data"] = get_default_objective_template_for_region(selected_category)
 
     st.markdown("---")
     
@@ -291,8 +431,8 @@ if role == "Admin/Instructor Editor":
                 e_diff = st.text_input("Master Diagnosis Key", value=case_data.get("diff_dx", ""))
 
         with tab2:
-            st.markdown("### Edit Granular Objective Physical Exam Findings")
-            st.caption("Provide specific movement breakdowns, anatomical structures, and test results.")
+            st.markdown(f"### Edit Objective Physical Exam Findings ({selected_category})")
+            st.caption("Customize movement breakdowns, specific anatomical structures, and special tests.")
             
             edited_objective_data = {}
             for cat in OBJECTIVE_CATEGORIES:
@@ -339,7 +479,7 @@ else:
         
     active_case = st.session_state.case_library[student_category][student_case_key]
     if "objective_data" not in active_case:
-        active_case["objective_data"] = get_default_objective_template()
+        active_case["objective_data"] = get_default_objective_template_for_region(student_category)
 
     unique_case_id = f"{student_category}_{student_case_key}"
     if "last_chosen_case_id" not in st.session_state or st.session_state.last_chosen_case_id != unique_case_id:
@@ -409,9 +549,9 @@ else:
         def open_phase1_dialog():
             st.write("Enter your top 3 differential diagnoses based on the subjective history to unlock Phase 2.")
             with st.form("phase1_diff_form"):
-                dx1 = st.text_input("Primary Suspected Differential:", placeholder="e.g., Postural Strain")
-                dx2 = st.text_input("Secondary Differential:", placeholder="e.g., Facet Joint Dysfunction")
-                dx3 = st.text_input("Tertiary Differential:", placeholder="e.g., Discogenic Radiculopathy")
+                dx1 = st.text_input("Primary Suspected Differential:", placeholder="e.g., Primary Pathology")
+                dx2 = st.text_input("Secondary Differential:", placeholder="e.g., Secondary Suspect")
+                dx3 = st.text_input("Tertiary Differential:", placeholder="e.g., Alternative Suspect")
                 
                 if st.form_submit_button("Submit & Proceed to Objective Exam", type="primary"):
                     if not dx1.strip() or not dx2.strip() or not dx3.strip():
@@ -428,7 +568,7 @@ else:
                 open_phase1_dialog()
 
     # ==========================================
-    # PHASE 2: OBJECTIVE PHYSICAL EXAM (FREE-FORM INPUT)
+    # PHASE 2: OBJECTIVE PHYSICAL EXAM
     # ==========================================
     elif st.session_state.encounter_phase == 2:
         st.subheader("🔬 Phase 2: Objective Physical Examination")
@@ -439,9 +579,9 @@ else:
                 st.markdown(f"**{i}.** {d}")
 
         st.markdown("### Request Physical Examination Procedures")
-        st.caption("Examples: *'Strength testing'*, *'Palpation of supraspinatus insertion'*, *'Hawkins-Kennedy Test'*, *'Active flexion ROM'*")
+        st.caption(f"Perform tests relevant to the **{student_category}** (e.g., MMT/Strength, Palpation, Special Tests, AROM/PROM)")
         
-        user_test_query = st.text_input("Enter physical exam evaluation / test to perform:", key="test_input_field", placeholder="e.g., Resisted shoulder flexion strength")
+        user_test_query = st.text_input("Enter physical exam evaluation / test to perform:", key="test_input_field", placeholder=f"e.g., {student_category} strength testing or special tests")
 
         if st.button("Execute Physical Examination Test", type="primary"):
             if not user_test_query.strip():
@@ -492,9 +632,9 @@ else:
             with st.form("treatment_phase_form"):
                 st.markdown("### 📝 Clinical Management Plan")
                 
-                f_dx = st.text_input("1. Final Diagnosis:", placeholder="e.g., Right Subacromial Pain Syndrome")
-                f_edu = st.text_area("2. Education:", placeholder="Patient reassurance, pathology explanation, posture advice...", height=100)
-                f_pain = st.text_area("3. Pain Management:", placeholder="Ice/heat, load modification, activity changes, modalities...", height=100)
+                f_dx = st.text_input("1. Final Diagnosis:", placeholder=f"e.g., Primary {student_category} Pathology")
+                f_edu = st.text_area("2. Education:", placeholder="Patient reassurance, posture/ergonomic advice, prognosis...", height=100)
+                f_pain = st.text_area("3. Pain Management:", placeholder="Heat/ice, activity modification, movement breaks...", height=100)
                 f_mob = st.text_area("4. Mobility:", placeholder="Range of motion exercises, joint mobilizations, stretching...", height=100)
                 f_str = st.text_area("5. Strength:", placeholder="Progressive resistance exercises, stabilizer strengthening...", height=100)
 
