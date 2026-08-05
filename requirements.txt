@@ -1,3 +1,4 @@
 streamlit
+pandas
 groq
 starlette<0.39.0
