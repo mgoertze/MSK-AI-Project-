@@ -4,8 +4,8 @@ import json
 import os
 
 # --- API CONFIGURATION ---
-GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
-client = Groq(api_key=GROQ_API_KEY)
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 MODEL_NAME = "llama-3.1-8b-instant"
 DATA_FILE = "cases.json"
@@ -782,28 +782,36 @@ DEFAULT_CASE_LIBRARY = {
     }
 }
 
-# --- PERSISTENT DISK STORAGE FUNCTIONS WITH AUTOMATED SANITIZATION ---
+# --- BULLETPROOF DISK STORAGE FUNCTIONS ---
 def save_cases_to_disk(case_data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(case_data, f, indent=4)
+    try:
+        with open(DATA_FILE, "w") as f:
+            json.dump(case_data, f, indent=4)
+    except Exception:
+        pass
 
 def load_cases_from_disk():
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, "r") as f:
                 data = json.load(f)
-                
-            # SANITIZATION: Automatically strip old diagnosis strings out of top-level case keys
+            
+            # SANITY CHECK: Ensure loaded structure is valid and has all 8 domains
+            if not isinstance(data, dict) or len(data.keys()) < len(DEFAULT_CASE_LIBRARY.keys()):
+                save_cases_to_disk(DEFAULT_CASE_LIBRARY)
+                return DEFAULT_CASE_LIBRARY
+
             cleaned_data = {}
             for region, cases in data.items():
-                cleaned_data[region] = {}
-                for case_key, case_info in cases.items():
-                    # Truncate any key like "Case 1 (Mechanical Neck Pain)" back to "Case 1"
-                    clean_key = case_key.split("(")[0].strip()
-                    cleaned_data[region][clean_key] = case_info
-            
-            return cleaned_data
+                if isinstance(cases, dict):
+                    cleaned_data[region] = {}
+                    for case_key, case_info in cases.items():
+                        clean_key = case_key.split("(")[0].strip()
+                        cleaned_data[region][clean_key] = case_info
+
+            return cleaned_data if len(cleaned_data.keys()) >= 8 else DEFAULT_CASE_LIBRARY
         except Exception:
+            save_cases_to_disk(DEFAULT_CASE_LIBRARY)
             return DEFAULT_CASE_LIBRARY
     else:
         save_cases_to_disk(DEFAULT_CASE_LIBRARY)
@@ -1033,7 +1041,6 @@ else:
     with col_cat:
         student_category = st.selectbox("Select Joint Category:", list(st.session_state.case_library.keys()))
     with col_case:
-        # STRICT DISPLAY: Case Number + Patient Name ONLY
         student_case_key = st.selectbox(
             "Select Patient Case:", 
             list(st.session_state.case_library[student_category].keys()),
@@ -1049,10 +1056,8 @@ else:
         st.session_state.submitted_differentials = ["", "", ""]
         st.session_state.last_chosen_case_id = unique_case_id
 
-    # STRICT HEADER DISPLAY: Case Identifier and Patient Name ONLY
     st.info(f"📋 **Active Encounter:** {student_category} ({student_case_key}) — Patient Name: **{active_case['name']}**")
     
-    # Display Chat Messages
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
@@ -1069,25 +1074,28 @@ else:
                 st.markdown(prompt)
                 
             with st.chat_message("assistant"):
-                try:
-                    system_instruction = build_patient_instructions(active_case)
-                    
-                    completion = client.chat.completions.create(
-                        model=MODEL_NAME,
-                        messages=[
-                            {"role": "system", "content": system_instruction},
-                            {"role": "user", "content": prompt}
-                        ],
-                        temperature=0.6,
-                        max_tokens=300
-                    )
-                    
-                    ai_text = completion.choices[0].message.content
-                    st.markdown(ai_text)
-                    st.session_state.messages.append({"role": "assistant", "content": ai_text})
-                    
-                except Exception as e:
-                    st.error(f"Groq API Error: {e}")
+                if not client:
+                    st.error("GROQ_API_KEY is missing from Streamlit secrets.")
+                else:
+                    try:
+                        system_instruction = build_patient_instructions(active_case)
+                        
+                        completion = client.chat.completions.create(
+                            model=MODEL_NAME,
+                            messages=[
+                                {"role": "system", "content": system_instruction},
+                                {"role": "user", "content": prompt}
+                            ],
+                            temperature=0.6,
+                            max_tokens=300
+                        )
+                        
+                        ai_text = completion.choices[0].message.content
+                        st.markdown(ai_text)
+                        st.session_state.messages.append({"role": "assistant", "content": ai_text})
+                        
+                    except Exception as e:
+                        st.error(f"Groq API Error: {e}")
 
         st.markdown("---")
         
