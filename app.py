@@ -21,16 +21,16 @@ OBJECTIVE_CATEGORIES = [
     "Special Tests"
 ]
 
-# --- DEFAULT OBJECTIVE FINDINGS TEMPLATE ---
+# --- DEFAULT DETAILED OBJECTIVE FINDINGS TEMPLATE ---
 def get_default_objective_template():
     return {
-        "Observation": "Postural alignment: Guarded position. Slight asymmetry noted on affected side.",
-        "Active Range of Motion (AROM)": "Flexion: 75% available with pain at end-range. Extension: Full, pain-free. Lateral movements: Mildly restricted.",
-        "Passive Range of Motion (PROM)": "Flexion: Full range with tissue-stretch end-feel and mild discomfort. Extension: Unrestricted.",
-        "Strength / Resisted Isometrics": "Primary movers: 4/5 with pain elicited on strong contraction. Surrounding stabilizers: 5/5 non-tender.",
-        "Functional Testing": "Single-leg balance: Stable. Deep squat / overhead reach: Reproduces primary complaint at 80% depth.",
-        "Palpation": "Point tenderness noted over local tendinous insertion. Surrounding muscular hypertonicity present.",
-        "Special Tests": "Primary provocative test: Positive. Secondary stability tests: Negative."
+        "Observation": "Postural alignment: Forward posture with mild muscle guarding. Asymmetry observed on affected side.",
+        "Active Range of Motion (AROM)": "Flexion: 120° with painful arc (Full = 180°). Extension: 45° pain-free. Abduction: 90° painful. Internal Rotation: 60°. External Rotation: 45°.",
+        "Passive Range of Motion (PROM)": "Flexion: 140° pain at end-range. Extension: Full, pain-free. Abduction: 110° painful. Internal Rotation: Full. External Rotation: Full with end-range discomfort.",
+        "Strength / Resisted Isometrics": "Flexion: 4/5 painful. Extension: 5/5 pain-free. Abduction: 3+/5 painful. Internal Rotation: 5/5 pain-free. External Rotation: 4-/5 painful.",
+        "Functional Testing": "Overhead reaching test: Reproduces primary complaint at 90°. Hand-behind-back reach: Mildly restricted at L3 level.",
+        "Palpation": "Supraspinatus tendon insertion at greater tubercle: Markedly tender. Bicipital groove: Non-tender. Acromioclavicular joint: Non-tender. Upper trapezius: Hypertonic with active trigger point.",
+        "Special Tests": "Hawkins-Kennedy Test: Positive (reproduces anterior shoulder pain). Neer Impingement Test: Positive. Empty Can (Jobe) Test: Positive for weakness and pain. Apprehension Test: Negative."
     }
 
 # --- DEFAULT FULL CASE LIBRARY ---
@@ -52,13 +52,13 @@ DEFAULT_CASE_LIBRARY = {
             "past_medical_history": "None.",
             "diff_dx": "Mechanical Neck Pain (Postural Strain)",
             "objective_data": {
-                "Observation": "Forward head posture, protracted scapulae, hypertonic upper trapezius muscles.",
-                "Active Range of Motion (AROM)": "Flexion: Full, mild ache. Extension: Full, pain-free. Rotation (B/L): Restricted 15% end-range tight.",
-                "Passive Range of Motion (PROM)": "Full in all planes with muscle-tightness end-feel in flexion.",
-                "Strength / Resisted Isometrics": "Cervical flexors: 4/5. Cervical extensors: 5/5. Scapular retractors: 4-/5.",
-                "Functional Testing": "Sustained neck flexion (desk posture simulation): Reproduces familiar ache at 2 minutes.",
-                "Palpation": "Bilateral upper trapezius and levator scapulae hypertonicity with active trigger points.",
-                "Special Tests": "Spurling Test: Negative. Cervical Distraction: Relieves tightness. Upper Limb Tension Tests: Negative."
+                "Observation": "Forward head posture, protracted scapulae bilaterally, hypertonic upper trapezius visual bulk.",
+                "Active Range of Motion (AROM)": "Flexion: Full range, mild posterior tightness. Extension: Full range, pain-free. Left Rotation: 70° (Full = 80°). Right Rotation: 70° (Full = 80°). Side Bending B/L: 35° (Full = 45°) with end-range muscle tightness.",
+                "Passive Range of Motion (PROM)": "Flexion: Full range with tissue-stretch end-feel. Extension: Full range, normal tissue-approximation. Rotation B/L: Full range with muscular tightness end-feel.",
+                "Strength / Resisted Isometrics": "Cervical Flexion: 4/5 non-painful. Cervical Extension: 5/5 pain-free. Cervical Side Bending B/L: 4+/5 non-painful. Deep Cervical Flexors (CCFT): Impaired endurance (12 seconds hold).",
+                "Functional Testing": "Sustained Neck Flexion (Desk posture simulation): Reproduces familiar mid-back and upper trap ache after 90 seconds.",
+                "Palpation": "Levator Scapulae insertion at superior angle of scapula: Moderately tender. Upper Trapezius muscle belly B/L: Markedly tender with active trigger points. C3-C5 Spinous processes & articular pillars: Non-tender.",
+                "Special Tests": "Spurling Test: Negative bilaterally. Cervical Distraction Test: Reduces feeling of heaviness/tightness. Upper Limb Tension Test A (Median): Negative bilaterally."
             }
         }
     }
@@ -91,7 +91,7 @@ def load_cases_from_disk():
                     else:
                         for cat in OBJECTIVE_CATEGORIES:
                             if cat not in cdata["objective_data"]:
-                                cdata["objective_data"][cat] = "No findings recorded."
+                                cdata["objective_data"][cat] = "No pathological findings recorded."
             return data
         except Exception:
             save_cases_to_disk(DEFAULT_CASE_LIBRARY)
@@ -163,6 +163,33 @@ def build_patient_instructions(c):
         f"- Stay in character as {c['name']}.\n"
         f"- Never state your diagnosis or medical jargon directly."
     )
+
+def match_objective_query(query_text, case_obj_data):
+    """Maps custom typed student queries to specific objective findings."""
+    q = query_text.strip().lower()
+    
+    # Direct Category Match Keywords
+    if any(k in q for k in ["strength", "resisted", "mmt", "manual muscle"]):
+        return "Strength / Resisted Isometrics", case_obj_data.get("Strength / Resisted Isometrics", "Normal strength.")
+    elif any(k in q for k in ["palpate", "palpation", "touch", "tenderness"]):
+        return "Palpation", case_obj_data.get("Palpation", "No specific point tenderness noted.")
+    elif any(k in q for k in ["special test", "provocative", "test"]):
+        return "Special Tests", case_obj_data.get("Special Tests", "Special tests negative.")
+    elif any(k in q for k in ["prom", "passive"]):
+        return "Passive Range of Motion (PROM)", case_obj_data.get("Passive Range of Motion (PROM)", "Full PROM.")
+    elif any(k in q for k in ["arom", "active range", "active motion", "flexion", "extension", "abduction", "rotation"]):
+        return "Active Range of Motion (AROM)", case_obj_data.get("Active Range of Motion (AROM)", "Full AROM.")
+    elif any(k in q for k in ["observe", "observation", "posture", "gait", "look"]):
+        return "Observation", case_obj_data.get("Observation", "No gross abnormality.")
+    elif any(k in q for k in ["functional", "squat", "reach", "hop", "balance"]):
+        return "Functional Testing", case_obj_data.get("Functional Testing", "Functional movements intact.")
+    else:
+        # Fallback search inside text of all objective categories
+        for cat, content in case_obj_data.items():
+            if q in content.lower() or any(term in content.lower() for term in q.split()):
+                return f"{cat} ({query_text.strip()})", content
+                
+        return query_text.strip(), f"Evaluation of '{query_text.strip()}': No localized or specific pathological findings reproduced."
 
 # --- STAGE 1: CCID SECURITY GATE ---
 if not st.session_state.ccid:
@@ -241,7 +268,7 @@ if role == "Admin/Instructor Editor":
     with st.form("admin_case_form"):
         st.subheader(f"Editing {selected_case_key}: Patient {case_data['name']} ({selected_category})")
         
-        tab1, tab2 = st.tabs(["🗣️ Subjective Case Parameters", "📊 Objective Test Matrix"])
+        tab1, tab2 = st.tabs(["🗣️ Subjective Case Parameters", "📊 Granular Objective Matrix"])
         
         with tab1:
             e_forthcoming = st.slider("Patient Forthcomingness (1-5):", 1, 5, int(case_data.get("forthcomingness", 3)))
@@ -264,13 +291,13 @@ if role == "Admin/Instructor Editor":
                 e_diff = st.text_input("Master Diagnosis Key", value=case_data.get("diff_dx", ""))
 
         with tab2:
-            st.markdown("### Edit Objective Category Chart Values")
-            st.caption("These findings populate the physical exam chart when students select these categories.")
+            st.markdown("### Edit Granular Objective Physical Exam Findings")
+            st.caption("Provide specific movement breakdowns, anatomical structures, and test results.")
             
             edited_objective_data = {}
             for cat in OBJECTIVE_CATEGORIES:
                 current_val = case_data["objective_data"].get(cat, "")
-                edited_objective_data[cat] = st.text_area(f"📌 {cat}", value=current_val, height=80)
+                edited_objective_data[cat] = st.text_area(f"📌 {cat}", value=current_val, height=100)
 
         save_submitted = st.form_submit_button("Save Case Settings & Objective Matrix", type="primary")
         
@@ -294,7 +321,7 @@ if role == "Admin/Instructor Editor":
                 "objective_data": edited_objective_data
             })
             save_cases_to_disk(st.session_state.case_library)
-            st.success(f"Case '{selected_case_key}' ({e_name}) objective matrix saved!")
+            st.success(f"Case '{selected_case_key}' ({e_name}) objective matrix saved successfully!")
 
 # --- STAGE 4: STUDENT 3-PHASE CLINICAL SIMULATOR ---
 else:
@@ -394,7 +421,6 @@ else:
                         st.session_state.encounter_phase = 2
                         st.rerun()
 
-        # HIGH VISIBILITY PROGRESSION BUTTON
         if st.button("➡️ Move on to Objective Exam", type="primary", use_container_width=True):
             if not st.session_state.subjective_messages:
                 st.warning("Please ask at least one subjective history question before moving on.")
@@ -402,43 +428,30 @@ else:
                 open_phase1_dialog()
 
     # ==========================================
-    # PHASE 2: OBJECTIVE PHYSICAL EXAM
+    # PHASE 2: OBJECTIVE PHYSICAL EXAM (FREE-FORM INPUT)
     # ==========================================
     elif st.session_state.encounter_phase == 2:
-        st.subheader("🔬 Phase 2: Objective Physical Examination Charting")
-        st.write("Select or type an objective category to pull the patient's physical examination chart.")
+        st.subheader("🔬 Phase 2: Objective Physical Examination")
+        st.write("Type what physical exam procedures or evaluations you want to perform.")
 
         with st.expander("📌 Your Phase 1 Initial Differential Diagnoses"):
             for i, d in enumerate(st.session_state.initial_differentials, 1):
                 st.markdown(f"**{i}.** {d}")
 
-        st.markdown("### Perform Physical Exam Category")
+        st.markdown("### Request Physical Examination Procedures")
+        st.caption("Examples: *'Strength testing'*, *'Palpation of supraspinatus insertion'*, *'Hawkins-Kennedy Test'*, *'Active flexion ROM'*")
         
-        selected_category_input = st.selectbox(
-            "Select Objective Category to Evaluate:",
-            ["-- Choose Category --"] + OBJECTIVE_CATEGORIES
-        )
-        
-        custom_typed = st.text_input("Or type specific test / category variations:", placeholder="e.g., Active range of motion")
+        user_test_query = st.text_input("Enter physical exam evaluation / test to perform:", key="test_input_field", placeholder="e.g., Resisted shoulder flexion strength")
 
-        if st.button("Request Examination Chart Findings", type="primary"):
-            chosen_cat = None
-            if selected_category_input != "-- Choose Category --":
-                chosen_cat = selected_category_input
-            elif custom_typed.strip():
-                typed_lower = custom_typed.strip().lower()
-                for cat in OBJECTIVE_CATEGORIES:
-                    if typed_lower in cat.lower() or cat.lower() in typed_lower:
-                        chosen_cat = cat
-                        break
-                if not chosen_cat:
-                    chosen_cat = custom_typed.strip()
-
-            if chosen_cat:
-                finding_text = active_case["objective_data"].get(chosen_cat, "No pathological findings noted.")
+        if st.button("Execute Physical Examination Test", type="primary"):
+            if not user_test_query.strip():
+                st.warning("Please type a test or evaluation request first.")
+            else:
+                category_name, finding_text = match_objective_query(user_test_query, active_case["objective_data"])
                 
                 st.session_state.objective_tests.append({
-                    "category": chosen_cat,
+                    "requested": user_test_query.strip(),
+                    "category": category_name,
                     "findings": finding_text
                 })
                 st.rerun()
@@ -447,16 +460,17 @@ else:
         st.markdown("### 📊 Physical Exam Charting Record")
         
         if not st.session_state.objective_tests:
-            st.info("No physical exam charts requested yet. Select a category above to evaluate.")
+            st.info("No physical exam tests executed yet. Type an examination request above to evaluate.")
         else:
             chart_df = pd.DataFrame(st.session_state.objective_tests)
-            chart_df.columns = ["Objective Category / Test", "Clinical Findings"]
+            chart_df = chart_df[["requested", "category", "findings"]]
+            chart_df.columns = ["Student Requested Test", "Matched Category", "Specific Clinical Findings"]
             st.dataframe(chart_df, use_container_width=True, hide_index=True)
 
         st.markdown("---")
         if st.button("➡️ Move on to Treatment Phase", type="primary", use_container_width=True):
             if not st.session_state.objective_tests:
-                st.warning("Please request at least one objective evaluation before proceeding.")
+                st.warning("Please perform at least one objective evaluation before proceeding.")
             else:
                 st.session_state.encounter_phase = 3
                 st.rerun()
@@ -472,7 +486,7 @@ else:
             st.markdown("**Phase 1 Differentials:** " + ", ".join(st.session_state.initial_differentials))
             st.markdown("**Phase 2 Objective Findings:**")
             for t in st.session_state.objective_tests:
-                st.markdown(f"- **{t['category']}:** {t['findings']}")
+                st.markdown(f"- **{t['requested']}** ({t['category']}): {t['findings']}")
 
         if st.session_state.encounter_phase == 3:
             with st.form("treatment_phase_form"):
@@ -544,7 +558,7 @@ else:
             export += f"--- PHASE 2: OBJECTIVE FINDINGS ---\n"
             if st.session_state.objective_tests:
                 for item in st.session_state.objective_tests:
-                    export += f"Category: {item['category']}\nFindings: {item['findings']}\n\n"
+                    export += f"Requested: {item['requested']}\nMatched Category: {item['category']}\nFindings: {item['findings']}\n\n"
             else:
                 export += f"[No objective evaluations recorded]\n\n"
 
