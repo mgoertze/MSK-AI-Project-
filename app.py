@@ -505,7 +505,7 @@ else:
     col_cat, col_case = st.columns(2)
     with col_cat:
         student_category = st.selectbox("Select Joint Category:", list(st.session_state.case_library.keys()))
-    with case_col:
+    with col_case:
         student_case_key = st.selectbox(
             "Select Patient Case:", 
             list(st.session_state.case_library[student_category].keys()),
