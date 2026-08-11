@@ -7,7 +7,7 @@ import requests
 import base64
 
 # ==============================================================================
-# 1. API & REPO CONFIGURATION (INITIALIZED AT VERY TOP TO PREVENT NAMEERRORS)
+# 1. API & REPO CONFIGURATION & DIAGNOSTICS
 # ==============================================================================
 GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "").strip()
 GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", "").strip()
@@ -27,23 +27,39 @@ OBJECTIVE_CATEGORIES = [
     "Special Tests"
 ]
 
-# Quick Connection Diagnostics in Sidebar
-if GITHUB_TOKEN and GITHUB_REPO:
-    clean_repo_check = GITHUB_REPO.replace("https://github.com/", "").replace(".git", "").strip("/")
-    diag_url = f"https://api.github.com/repos/{clean_repo_check}"
-    diag_headers = {
+# --- DEEP AUTH DIAGNOSTIC CHECK IN SIDEBAR ---
+st.sidebar.markdown("### 🔍 GitHub Auth Debugger")
+st.sidebar.caption("Verifying token and secret configuration:")
+
+clean_repo = GITHUB_REPO.replace("https://github.com/", "").replace(".git", "").strip("/")
+st.sidebar.text(f"Repo read: '{clean_repo}'")
+st.sidebar.text(f"Token length: {len(GITHUB_TOKEN)} chars")
+st.sidebar.text(f"Token prefix: {GITHUB_TOKEN[:4]}..." if GITHUB_TOKEN else "Token prefix: NONE")
+
+if GITHUB_TOKEN and clean_repo:
+    url = f"https://api.github.com/repos/{clean_repo}"
+    
+    # Test 1: Unauthenticated Public Check
+    unauth_r = requests.get(url)
+    st.sidebar.text(f"Public API Status: {unauth_r.status_code}")
+    
+    # Test 2: Authenticated Check
+    auth_headers = {
         "Authorization": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github.v3+json",
         "X-GitHub-Api-Version": "2022-11-28"
     }
-    try:
-        diag_res = requests.get(diag_url, headers=diag_headers)
-        if diag_res.status_code == 200:
-            st.sidebar.success(f"Connected to GitHub: {clean_repo_check}")
-        else:
-            st.sidebar.error(f"GitHub Auth Alert ({diag_res.status_code}): {diag_res.json().get('message')}")
-    except Exception as e:
-        st.sidebar.error(f"GitHub Diagnostic Error: {e}")
+    auth_r = requests.get(url, headers=auth_headers)
+    st.sidebar.text(f"Auth API Status: {auth_r.status_code}")
+    
+    if auth_r.status_code == 200:
+        st.sidebar.success(f" Connected to {clean_repo}")
+    else:
+        st.sidebar.error(f"GitHub Error ({auth_r.status_code}): {auth_r.json().get('message', 'Unknown Error')}")
+else:
+    st.sidebar.warning(" Missing GITHUB_TOKEN or GITHUB_REPO in secrets.")
+
+st.sidebar.markdown("---")
 
 # ==============================================================================
 # 2. REGION-SPECIFIC DEFAULT OBJECTIVE FINDINGS TEMPLATES
@@ -51,7 +67,6 @@ if GITHUB_TOKEN and GITHUB_REPO:
 def get_default_objective_template_for_region(region_name):
     r = str(region_name).lower()
     
-    # 1. CERVICAL SPINE
     if "cervical" in r or "neck" in r:
         return {
             "Observation": "Forward head posture, protracted shoulder girdle, hypertonic upper trapezius visual bulk.",
@@ -62,8 +77,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Cervical Paraspinals (C4-C6): Moderately tender. Upper Trapezius & Levator Scapulae: Markedly tender with active trigger points. Spinous processes: Non-tender.",
             "Special Tests": "Spurling Test: Positive for localized neck pain (Negative for arm radiculopathy). Cervical Distraction Test: Reduces feeling of heaviness. Upper Limb Tension Tests (ULTT 1/Median): Negative."
         }
-    
-    # 2. LUMBAR SPINE
     elif "lumbar" in r or "back" in r:
         return {
             "Observation": "Flattened lumbar lordosis, antalgic posture, guarded transfer movements.",
@@ -74,8 +87,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Lumbar Erector Spinae (L3-L5): Bilateral hypertonicity and tenderness. Quadratus Lumborum: Moderately tender. L4/L5 Spinous processes: Mildly tender.",
             "Special Tests": "Straight Leg Raise (SLR): Negative for radicular shooting pain below knee. Slump Test: Negative. Lumbar Quadrant Test: Reproduces localized L/S pain."
         }
-    
-    # 3. SHOULDER
     elif "shoulder" in r:
         return {
             "Observation": "Slight anterior hitch of humeral head, mild sulcus asymmetry, muscle guarding.",
@@ -86,8 +97,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Supraspinatus insertion at greater tubercle: Markedly tender. Bicipital groove: Non-tender. AC Joint: Non-tender.",
             "Special Tests": "Hawkins-Kennedy Test: Positive. Neer Impingement Test: Positive. Empty Can (Jobe) Test: Positive for weakness and pain. Apprehension Test: Negative."
         }
-
-    # 4. ELBOW
     elif "elbow" in r:
         return {
             "Observation": "Carrying angle normal (10-15°), no gross joint effusion, holding arm guarded in 90° flexion.",
@@ -98,8 +107,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Lateral Epicondyle: Exquisitely tender to touch. Medial Epicondyle: Non-tender. Radial Head: Non-tender.",
             "Special Tests": "Cozen's Test (Resisted Wrist Extension): Positive. Mill's Test (Passive Wrist Flexion/Pronation): Positive. Golfer's Elbow Test: Negative."
         }
-
-    # 5. WRIST AND HAND
     elif "wrist" in r or "hand" in r:
         return {
             "Observation": "Mild localized swelling over radial wrist, normal muscle bulk in thenar/hypothenar eminences.",
@@ -110,8 +117,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "1st Dorsal Compartment (Abductor Pollicis Longus / Extensor Pollicis Brevis tendons): Highly tender. Anatomical Snuffbox: Non-tender.",
             "Special Tests": "Finkelstein's Test: Positive (sharp pain over radial styloid). Eichhoff's Test: Positive. Tinel's at Carpal Tunnel: Negative."
         }
-
-    # 6. HIP
     elif "hip" in r:
         return {
             "Observation": "Antalgic gait with shortened stance phase on affected side, Trendelenburg sign negative.",
@@ -122,8 +127,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Greater Trochanter: Moderately tender. Deep Groin / Femoral Triangle: Tender to deep palpation. Ischial Tuberosity: Non-tender.",
             "Special Tests": "FADDIR Test (Flexion, Adduction, Internal Rotation): Positive for deep groin pain. FABER / Patrick's Test: Positive for lateral/groin pain. Thomas Test: Positive for hip flexor tightness."
         }
-
-    # 7. KNEE
     elif "knee" in r:
         return {
             "Observation": "Mild intra-articular joint effusion (1+ sweep test), no visible alignment deformity (Genu Varum/Valgum normal).",
@@ -134,8 +137,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Medial Joint Line: Point tender. Patellar Tendon: Non-tender. Lateral Joint Line: Non-tender. Anserine Bursa: Non-tender.",
             "Special Tests": "McMurray Test: Positive for medial joint line click/pain. Lachman Test: Negative (Firm end-point). Anterior Drawer: Negative. Patellar Apprehension: Negative."
         }
-
-    # 8. ANKLE AND FOOT
     elif "ankle" in r or "foot" in r:
         return {
             "Observation": "Ecchymosis and edema localized below lateral malleolus, antalgic gait favoring heel-strike.",
@@ -146,8 +147,6 @@ def get_default_objective_template_for_region(region_name):
             "Palpation": "Anterior Talofibular Ligament (ATFL): Highly tender. Calcaneofibular Ligament (CFL): Moderately tender. Lateral Malleolus Bone: Non-tender.",
             "Special Tests": "Anterior Drawer Test (Ankle): Positive for mild laxity compared to contralateral side. Talar Tilt Test: Positive for pain. Thompson Squeeze Test: Negative (Achilles intact)."
         }
-        
-    # GENERAL FALLBACK
     else:
         return {
             "Observation": "Postural alignment: Guarded position. Slight asymmetry noted on affected side.",
@@ -950,23 +949,20 @@ DEFAULT_CASE_LIBRARY = {
 }
 
 # ==============================================================================
-# 4. PERSISTENT DISK & GITHUB STORAGE FUNCTIONS (UPDATED REST API HEADERS)
+# 4. PERSISTENT DISK & GITHUB STORAGE FUNCTIONS
 # ==============================================================================
 def save_cases_to_disk(case_data):
-    # 1. Update local copy for current session
     try:
         with open(DATA_FILE, "w") as f:
             json.dump(case_data, f, indent=4)
     except Exception:
         pass
 
-    # 2. Push commit to GitHub for permanent cloud persistence
     if GITHUB_TOKEN and GITHUB_REPO:
         try:
             clean_repo = GITHUB_REPO.replace("https://github.com/", "").replace(".git", "").strip("/")
             url = f"https://api.github.com/repos/{clean_repo}/contents/{DATA_FILE}"
             
-            # STEP 1 FIX: Updated Authorization header to standard 'Bearer' & API versioning
             headers = {
                 "Authorization": f"Bearer {GITHUB_TOKEN}",
                 "Accept": "application/vnd.github.v3+json",
@@ -1041,7 +1037,6 @@ if "objective_tests" not in st.session_state:
 if "initial_differentials" not in st.session_state:
     st.session_state.initial_differentials = ["", "", ""]
 
-# Phase 3 Structured Inputs State
 if "tx_final_dx" not in st.session_state:
     st.session_state.tx_final_dx = ""
 if "tx_education" not in st.session_state:
