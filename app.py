@@ -6,6 +6,21 @@ import os
 import requests
 import base64
 
+import requests
+
+# Test repo visibility directly
+test_url = f"https://api.github.com/repos/{GITHUB_REPO}"
+test_headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+res = requests.get(test_url, headers=test_headers)
+
+if res.status_code == 200:
+    st.success("GitHub API connected successfully to mgoertze/MSKAI!")
+elif res.status_code == 404:
+    st.error("GitHub API 404: Token lacks permissions or repository 'mgoertze/MSKAI' does not exist.")
+else:
+    st.error(f"GitHub API Error ({res.status_code}): {res.json().get('message')}")
+
+
 # --- API & REPO CONFIGURATION ---
 GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
 client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
