@@ -938,76 +938,57 @@ def save_cases_to_disk(case_data):
     # 2. Push commit to GitHub for permanent cloud persistence
     if GITHUB_TOKEN and GITHUB_REPO:
         try:
-            url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{DATA_FILE}"
+            repo_path = GITHUB_REPO.replace("https://github.com/", "").strip("/")
+            url = f"https://api.github.com/repos/{repo_path}/contents/{DATA_FILE}"
             headers = {
                 "Authorization": f"token {GITHUB_TOKEN}",
                 "Accept": "application/vnd.github.v3+json"
             }
 
-            # Get current SHA required for updating an existing file via GitHub API
             get_res = requests.get(url, headers=headers)
             sha = get_res.json().get("sha", "") if get_res.status_code == 200 else ""
 
-            # Base64 encode updated JSON content
             json_bytes = json.dumps(case_data, indent=4).encode("utf-8")
             base64_content = base64.b64encode(json_bytes).decode("utf-8")
 
             payload = {
                 "message": "Admin update: Sync cases.json via Streamlit UI",
-                "content": base64_content,
-                "sha": sha
+                "content": base64_content
             }
+            if sha:
+                payload["sha"] = sha
 
             put_res = requests.put(url, headers=headers, json=payload)
             if put_res.status_code in [200, 201]:
                 st.toast("Saved permanently to GitHub repo!", icon="✅")
             else:
-                st.error(f"GitHub Sync Failed: {put_res.json().get('message')}")
+                st.error(f"GitHub Sync Failed ({put_res.status_code}): {put_res.json().get('message')}")
         except Exception as err:
             st.error(f"GitHub Sync Error: {err}")
 
 def load_cases_from_disk():
+    loaded_data = None
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, "r") as f:
-                data = json.load(f)
-            
-            for region, cases in data.items():
-                region_template = get_default_objective_template_for_region(region)
-                
-                for case_key, cdata in cases.items():
-                    if "forthcomingness" not in cdata:
-                        cdata["forthcomingness"] = 1
-                    
+                loaded_data = json.load(f)
+        except Exception:
+            loaded_data = None
+
+    if not loaded_data or not isinstance(loaded_data, dict):
+        loaded_data = DEFAULT_CASE_LIBRARY
+        save_cases_to_disk(DEFAULT_CASE_LIBRARY)
+
+    for region, cases in list(loaded_data.items()):
+        region_template = get_default_objective_template_for_region(region)
+        if isinstance(cases, dict):
+            for case_key, cdata in cases.items():
+                if isinstance(cdata, dict):
+                    cdata.setdefault("forthcomingness", 1)
                     if "objective_data" not in cdata:
                         cdata["objective_data"] = region_template
-                    else:
-                        sp_tests = cdata["objective_data"].get("Special Tests", "")
-                        if "cervical" in region.lower() and "Hawkins" in sp_tests:
-                            cdata["objective_data"] = region_template
-                        elif "hip" in region.lower() and ("Hawkins" in sp_tests or "Spurling" in sp_tests):
-                            cdata["objective_data"] = region_template
-                        elif "knee" in region.lower() and ("Hawkins" in sp_tests or "Spurling" in sp_tests):
-                            cdata["objective_data"] = region_template
-                        elif "shoulder" in region.lower() and ("Spurling" in sp_tests or "FADDIR" in sp_tests):
-                            cdata["objective_data"] = region_template
-                        else:
-                            for cat in OBJECTIVE_CATEGORIES:
-                                if cat not in cdata["objective_data"]:
-                                    cdata["objective_data"][cat] = region_template.get(cat, "No pathological findings recorded.")
-            return data
-        except Exception:
-            save_cases_to_disk(DEFAULT_CASE_LIBRARY)
-            return DEFAULT_CASE_LIBRARY
-    else:
-        for region, cases in DEFAULT_CASE_LIBRARY.items():
-            region_template = get_default_objective_template_for_region(region)
-            for case_key, cdata in cases.items():
-                cdata["forthcomingness"] = 1
-                cdata["objective_data"] = region_template
-                
-        save_cases_to_disk(DEFAULT_CASE_LIBRARY)
-        return DEFAULT_CASE_LIBRARY
+
+    return loaded_data
 
 # --- SESSION STATE INITIALIZATION ---
 if "ccid" not in st.session_state:
@@ -1157,22 +1138,31 @@ if role == "Admin/Instructor Editor":
     
     cat_col, case_col = st.columns(2)
     with cat_col:
-        selected_category = st.selectbox("1. Select Joint Domain:", list(st.session_state.case_library.keys()))
-    with case_col:
-        selected_case_key = st.selectbox(
-            "2. Select Patient Case:", 
-            list(st.session_state.case_library[selected_category].keys()),
-            format_func=lambda k: f"{k} — Patient: {st.session_state.case_library[selected_category][k]['name']}"
-        )
+        admin_categories = list(st.session_state.case_library.keys())
+        selected_category = st.selectbox("1. Select Joint Domain:", admin_categories)
         
-    case_data = st.session_state.case_library[selected_category][selected_case_key]
+    admin_category_cases = st.session_state.case_library.get(selected_category, {})
+    admin_case_keys = list(admin_category_cases.keys())
+
+    with case_col:
+        if admin_case_keys:
+            selected_case_key = st.selectbox(
+                "2. Select Patient Case:", 
+                admin_case_keys,
+                format_func=lambda k: f"{k} — Patient: {admin_category_cases[k].get('name', 'Unknown')}"
+            )
+        else:
+            st.error(f"No cases found for category: {selected_category}")
+            st.stop()
+        
+    case_data = admin_category_cases[selected_case_key]
     if "objective_data" not in case_data:
         case_data["objective_data"] = get_default_objective_template_for_region(selected_category)
 
     st.markdown("---")
     
     with st.form("admin_case_form"):
-        st.subheader(f"Editing {selected_case_key}: Patient {case_data['name']} ({selected_category})")
+        st.subheader(f"Editing {selected_case_key}: Patient {case_data.get('name', '')} ({selected_category})")
         
         tab1, tab2 = st.tabs(["🗣️ Subjective Case Parameters", "📊 Granular Objective Matrix"])
         
@@ -1234,15 +1224,24 @@ else:
     
     col_cat, col_case = st.columns(2)
     with col_cat:
-        student_category = st.selectbox("Select Joint Category:", list(st.session_state.case_library.keys()))
+        available_categories = list(st.session_state.case_library.keys())
+        student_category = st.selectbox("Select Joint Category:", available_categories)
+
+    category_cases = st.session_state.case_library.get(student_category, {})
+    case_keys = list(category_cases.keys())
+
     with col_case:
-        student_case_key = st.selectbox(
-            "Select Patient Case:", 
-            list(st.session_state.case_library[student_category].keys()),
-            format_func=lambda k: f"{k} — Patient: {st.session_state.case_library[student_category][k]['name']}"
-        )
+        if case_keys:
+            student_case_key = st.selectbox(
+                "Select Patient Case:", 
+                case_keys,
+                format_func=lambda k: f"{k} — Patient: {category_cases[k].get('name', 'Unknown')}"
+            )
+        else:
+            st.error(f"No cases found for category: {student_category}")
+            st.stop()
         
-    active_case = st.session_state.case_library[student_category][student_case_key]
+    active_case = category_cases[student_case_key]
     if "objective_data" not in active_case:
         active_case["objective_data"] = get_default_objective_template_for_region(student_category)
 
@@ -1259,7 +1258,7 @@ else:
         st.session_state.tx_strength = ""
         st.session_state.last_chosen_case_id = unique_case_id
 
-    st.info(f"📋 **Active Encounter:** {student_category} ({student_case_key}) — Patient: **{active_case['name']}**")
+    st.info(f"📋 **Active Encounter:** {student_category} ({student_case_key}) — Patient: **{active_case.get('name', 'Unknown')}**")
 
     # ENCOUNTER PROGRESS BAR
     phase_names = {
@@ -1352,7 +1351,7 @@ else:
             if not user_test_query.strip():
                 st.warning("Please type a test or evaluation request first.")
             else:
-                category_name, finding_text = match_objective_query(user_test_query, active_case["objective_data"])
+                category_name, finding_text = match_objective_query(user_test_query, active_case.get("objective_data", {}))
                 
                 st.session_state.objective_tests.append({
                     "requested": user_test_query.strip(),
@@ -1447,7 +1446,7 @@ else:
             export += f"==================================================\n"
             export += f"Student CCID: {st.session_state.ccid}\n"
             export += f"Joint Region: {student_category} ({student_case_key})\n"
-            export += f"Patient Name: {active_case['name']}\n"
+            export += f"Patient Name: {active_case.get('name', 'Unknown')}\n"
             export += f"--------------------------------------------------\n\n"
             
             export += f"--- PHASE 1: SUBJECTIVE HISTORY ---\n"
