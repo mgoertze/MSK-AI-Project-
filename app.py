@@ -3,10 +3,15 @@ import pandas as pd
 from groq import Groq
 import json
 import os
+import requests
+import base64
 
-# --- API CONFIGURATION ---
+# --- API & REPO CONFIGURATION ---
 GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
 client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
+
+GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", "")
+GITHUB_REPO = st.secrets.get("GITHUB_REPO", "")  # Expected format: "username/repo-name"
 
 MODEL_NAME = "llama-3.1-8b-instant"
 DATA_FILE = "cases.json"
@@ -137,7 +142,7 @@ def get_default_objective_template_for_region(region_name):
 DEFAULT_CASE_LIBRARY = {
     "Cervical spine": {
         "Case 1": {
-            "name": "Arthur", "region_label": "Cervical spine", "forthcomingness": 3,
+            "name": "Arthur", "region_label": "Cervical spine", "forthcomingness": 1,
             "demeanor": "Rubbing neck, sits slouched forward.",
             "chief_complaint": "Persistent ache across upper back and neck after long hours at computer.",
             "history_present_illness": "Dull ache developed over 3 months as work demands increased.",
@@ -155,7 +160,7 @@ DEFAULT_CASE_LIBRARY = {
     },
     "Shoulder": {
         "Case 1": {
-            "name": "Sarah", "region_label": "Shoulder", "forthcomingness": 3,
+            "name": "Sarah", "region_label": "Shoulder", "forthcomingness": 1,
             "demeanor": "Holding right arm close to side, avoids overhead reach.",
             "chief_complaint": "Anterior shoulder pain when reaching into upper cabinets.",
             "history_present_illness": "Pain started 6 weeks ago after painting garage ceiling.",
@@ -173,7 +178,7 @@ DEFAULT_CASE_LIBRARY = {
     },
     "Hip": {
         "Case 1": {
-            "name": "Robert", "region_label": "Hip", "forthcomingness": 3,
+            "name": "Robert", "region_label": "Hip", "forthcomingness": 1,
             "demeanor": "Walking with slight limp, rubs anterior groin when sitting.",
             "chief_complaint": "Deep groin pinching pain when getting out of car or squatting.",
             "history_present_illness": "Deep groin stiffness developed over 4 months.",
@@ -191,13 +196,45 @@ DEFAULT_CASE_LIBRARY = {
     }
 }
 
-# --- DISK STORAGE FUNCTIONS ---
+# --- PERSISTENT DISK & GITHUB STORAGE FUNCTIONS ---
 def save_cases_to_disk(case_data):
+    # 1. Update local copy for current session
     try:
         with open(DATA_FILE, "w") as f:
             json.dump(case_data, f, indent=4)
     except Exception:
         pass
+
+    # 2. Push commit to GitHub for permanent cloud persistence
+    if GITHUB_TOKEN and GITHUB_REPO:
+        try:
+            url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{DATA_FILE}"
+            headers = {
+                "Authorization": f"token {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+
+            # Get current SHA required for updating an existing file via GitHub API
+            get_res = requests.get(url, headers=headers)
+            sha = get_res.json().get("sha", "") if get_res.status_code == 200 else ""
+
+            # Base64 encode updated JSON content
+            json_bytes = json.dumps(case_data, indent=4).encode("utf-8")
+            base64_content = base64.b64encode(json_bytes).decode("utf-8")
+
+            payload = {
+                "message": "Admin update: Sync cases.json via Streamlit UI",
+                "content": base64_content,
+                "sha": sha
+            }
+
+            put_res = requests.put(url, headers=headers, json=payload)
+            if put_res.status_code in [200, 201]:
+                st.toast("Saved permanently to GitHub repo!", icon="✅")
+            else:
+                st.error(f"GitHub Sync Failed: {put_res.json().get('message')}")
+        except Exception as err:
+            st.error(f"GitHub Sync Error: {err}")
 
 def load_cases_from_disk():
     if os.path.exists(DATA_FILE):
@@ -209,11 +246,12 @@ def load_cases_from_disk():
                 region_template = get_default_objective_template_for_region(region)
                 
                 for case_key, cdata in cases.items():
-                    # Validate that region match is accurate
+                    if "forthcomingness" not in cdata:
+                        cdata["forthcomingness"] = 1
+                    
                     if "objective_data" not in cdata:
                         cdata["objective_data"] = region_template
                     else:
-                        # Auto-clean cross-contaminated baseline objective findings from legacy JSONs
                         sp_tests = cdata["objective_data"].get("Special Tests", "")
                         if "cervical" in region.lower() and "Hawkins" in sp_tests:
                             cdata["objective_data"] = region_template
@@ -232,10 +270,10 @@ def load_cases_from_disk():
             save_cases_to_disk(DEFAULT_CASE_LIBRARY)
             return DEFAULT_CASE_LIBRARY
     else:
-        # Build initial library with region-appropriate objective matrices
         for region, cases in DEFAULT_CASE_LIBRARY.items():
             region_template = get_default_objective_template_for_region(region)
             for case_key, cdata in cases.items():
+                cdata["forthcomingness"] = 1
                 cdata["objective_data"] = region_template
                 
         save_cases_to_disk(DEFAULT_CASE_LIBRARY)
@@ -288,7 +326,7 @@ def build_patient_instructions(c):
     return (
         f"You are a standardized patient named {c['name']} in a medical simulation.\n"
         f"PATIENT DEMEANOR: {c['demeanor']}\n"
-        f"{get_forthcomingness_instruction(c.get('forthcomingness', 3))}\n\n"
+        f"{get_forthcomingness_instruction(c.get('forthcomingness', 1))}\n\n"
         f"CHIEF COMPLAINT: {c['chief_complaint']}\n"
         f"HPI: {c['history_present_illness']}\n"
         f"LOCATION: {c['location_pain']}\n"
@@ -306,10 +344,8 @@ def build_patient_instructions(c):
     )
 
 def match_objective_query(query_text, case_obj_data):
-    """Maps custom typed student queries to specific objective findings."""
     q = query_text.strip().lower()
     
-    # Category Keywords Matching
     if any(k in q for k in ["strength", "resisted", "mmt", "manual muscle", "myotome"]):
         return "Strength / Resisted Isometrics", case_obj_data.get("Strength / Resisted Isometrics", "Normal strength.")
     elif any(k in q for k in ["palpate", "palpation", "touch", "tenderness", "point"]):
@@ -411,7 +447,7 @@ if role == "Admin/Instructor Editor":
         tab1, tab2 = st.tabs(["🗣️ Subjective Case Parameters", "📊 Granular Objective Matrix"])
         
         with tab1:
-            e_forthcoming = st.slider("Patient Forthcomingness (1-5):", 1, 5, int(case_data.get("forthcomingness", 3)))
+            e_forthcoming = st.slider("Patient Forthcomingness (1-5):", 1, 5, int(case_data.get("forthcomingness", 1)))
             col1, col2 = st.columns(2)
             with col1:
                 e_name = st.text_input("Patient Name", value=case_data.get("name", ""))
@@ -439,7 +475,7 @@ if role == "Admin/Instructor Editor":
                 current_val = case_data["objective_data"].get(cat, "")
                 edited_objective_data[cat] = st.text_area(f"📌 {cat}", value=current_val, height=100)
 
-        save_submitted = st.form_submit_button("Save Case Settings & Objective Matrix", type="primary")
+        save_submitted = st.form_submit_button("Save Case Settings & Sync to GitHub", type="primary")
         
         if save_submitted:
             st.session_state.case_library[selected_category][selected_case_key].update({
@@ -461,7 +497,6 @@ if role == "Admin/Instructor Editor":
                 "objective_data": edited_objective_data
             })
             save_cases_to_disk(st.session_state.case_library)
-            st.success(f"Case '{selected_case_key}' ({e_name}) objective matrix saved successfully!")
 
 # --- STAGE 4: STUDENT 3-PHASE CLINICAL SIMULATOR ---
 else:
@@ -470,7 +505,7 @@ else:
     col_cat, col_case = st.columns(2)
     with col_cat:
         student_category = st.selectbox("Select Joint Category:", list(st.session_state.case_library.keys()))
-    with col_case:
+    with case_col:
         student_case_key = st.selectbox(
             "Select Patient Case:", 
             list(st.session_state.case_library[student_category].keys()),
