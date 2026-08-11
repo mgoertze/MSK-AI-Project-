@@ -9,9 +9,9 @@ import base64
 # ==============================================================================
 # 1. API & REPO CONFIGURATION (INITIALIZED AT VERY TOP TO PREVENT NAMEERRORS)
 # ==============================================================================
-GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
-GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", "")
-GITHUB_REPO = st.secrets.get("GITHUB_REPO", "")  # Expected format: "username/repo-name"
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "").strip()
+GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", "").strip()
+GITHUB_REPO = st.secrets.get("GITHUB_REPO", "").strip()  # Expected format: "username/repo-name"
 
 client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 MODEL_NAME = "llama-3.1-8b-instant"
@@ -26,6 +26,24 @@ OBJECTIVE_CATEGORIES = [
     "Palpation",
     "Special Tests"
 ]
+
+# Quick Connection Diagnostics in Sidebar
+if GITHUB_TOKEN and GITHUB_REPO:
+    clean_repo_check = GITHUB_REPO.replace("https://github.com/", "").replace(".git", "").strip("/")
+    diag_url = f"https://api.github.com/repos/{clean_repo_check}"
+    diag_headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+    try:
+        diag_res = requests.get(diag_url, headers=diag_headers)
+        if diag_res.status_code == 200:
+            st.sidebar.success(f"Connected to GitHub: {clean_repo_check}")
+        else:
+            st.sidebar.error(f"GitHub Auth Alert ({diag_res.status_code}): {diag_res.json().get('message')}")
+    except Exception as e:
+        st.sidebar.error(f"GitHub Diagnostic Error: {e}")
 
 # ==============================================================================
 # 2. REGION-SPECIFIC DEFAULT OBJECTIVE FINDINGS TEMPLATES
@@ -932,7 +950,7 @@ DEFAULT_CASE_LIBRARY = {
 }
 
 # ==============================================================================
-# 4. PERSISTENT DISK & GITHUB STORAGE FUNCTIONS
+# 4. PERSISTENT DISK & GITHUB STORAGE FUNCTIONS (UPDATED REST API HEADERS)
 # ==============================================================================
 def save_cases_to_disk(case_data):
     # 1. Update local copy for current session
@@ -947,9 +965,12 @@ def save_cases_to_disk(case_data):
         try:
             clean_repo = GITHUB_REPO.replace("https://github.com/", "").replace(".git", "").strip("/")
             url = f"https://api.github.com/repos/{clean_repo}/contents/{DATA_FILE}"
+            
+            # STEP 1 FIX: Updated Authorization header to standard 'Bearer' & API versioning
             headers = {
-                "Authorization": f"token {GITHUB_TOKEN}",
-                "Accept": "application/vnd.github.v3+json"
+                "Authorization": f"Bearer {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github.v3+json",
+                "X-GitHub-Api-Version": "2022-11-28"
             }
 
             get_res = requests.get(url, headers=headers)
