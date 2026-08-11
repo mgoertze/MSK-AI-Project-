@@ -6,28 +6,14 @@ import os
 import requests
 import base64
 
-import requests
-
-# Test repo visibility directly
-test_url = f"https://api.github.com/repos/{GITHUB_REPO}"
-test_headers = {"Authorization": f"token {GITHUB_TOKEN}"}
-res = requests.get(test_url, headers=test_headers)
-
-if res.status_code == 200:
-    st.success("GitHub API connected successfully to mgoertze/MSKAI!")
-elif res.status_code == 404:
-    st.error("GitHub API 404: Token lacks permissions or repository 'mgoertze/MSKAI' does not exist.")
-else:
-    st.error(f"GitHub API Error ({res.status_code}): {res.json().get('message')}")
-
-
-# --- API & REPO CONFIGURATION ---
+# ==============================================================================
+# 1. API & REPO CONFIGURATION (INITIALIZED AT VERY TOP TO PREVENT NAMEERRORS)
+# ==============================================================================
 GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
-client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
-
 GITHUB_TOKEN = st.secrets.get("GITHUB_TOKEN", "")
 GITHUB_REPO = st.secrets.get("GITHUB_REPO", "")  # Expected format: "username/repo-name"
 
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 MODEL_NAME = "llama-3.1-8b-instant"
 DATA_FILE = "cases.json"
 
@@ -41,7 +27,9 @@ OBJECTIVE_CATEGORIES = [
     "Special Tests"
 ]
 
-# --- REGION-SPECIFIC DEFAULT OBJECTIVE FINDINGS TEMPLATES ---
+# ==============================================================================
+# 2. REGION-SPECIFIC DEFAULT OBJECTIVE FINDINGS TEMPLATES
+# ==============================================================================
 def get_default_objective_template_for_region(region_name):
     r = str(region_name).lower()
     
@@ -153,7 +141,9 @@ def get_default_objective_template_for_region(region_name):
             "Special Tests": "Primary provocative test: Positive. Secondary stability tests: Negative."
         }
 
-# --- COMPLETE 48-CASE LIBRARY DEFAULT ---
+# ==============================================================================
+# 3. COMPLETE DEFAULT CASE LIBRARY (48 PATIENT CASES)
+# ==============================================================================
 DEFAULT_CASE_LIBRARY = {
     "Cervical spine": {
         "Case 1": {
@@ -941,7 +931,9 @@ DEFAULT_CASE_LIBRARY = {
     }
 }
 
-# --- PERSISTENT DISK & GITHUB STORAGE FUNCTIONS ---
+# ==============================================================================
+# 4. PERSISTENT DISK & GITHUB STORAGE FUNCTIONS
+# ==============================================================================
 def save_cases_to_disk(case_data):
     # 1. Update local copy for current session
     try:
@@ -953,15 +945,17 @@ def save_cases_to_disk(case_data):
     # 2. Push commit to GitHub for permanent cloud persistence
     if GITHUB_TOKEN and GITHUB_REPO:
         try:
-            repo_path = GITHUB_REPO.replace("https://github.com/", "").strip("/")
-            url = f"https://api.github.com/repos/{repo_path}/contents/{DATA_FILE}"
+            clean_repo = GITHUB_REPO.replace("https://github.com/", "").replace(".git", "").strip("/")
+            url = f"https://api.github.com/repos/{clean_repo}/contents/{DATA_FILE}"
             headers = {
                 "Authorization": f"token {GITHUB_TOKEN}",
                 "Accept": "application/vnd.github.v3+json"
             }
 
             get_res = requests.get(url, headers=headers)
-            sha = get_res.json().get("sha", "") if get_res.status_code == 200 else ""
+            sha = ""
+            if get_res.status_code == 200:
+                sha = get_res.json().get("sha", "")
 
             json_bytes = json.dumps(case_data, indent=4).encode("utf-8")
             base64_content = base64.b64encode(json_bytes).decode("utf-8")
@@ -976,6 +970,8 @@ def save_cases_to_disk(case_data):
             put_res = requests.put(url, headers=headers, json=payload)
             if put_res.status_code in [200, 201]:
                 st.toast("Saved permanently to GitHub repo!", icon="✅")
+            elif put_res.status_code == 404:
+                st.error("GitHub Sync Failed (404): Check GITHUB_REPO format (username/repo) and GITHUB_TOKEN write access.")
             else:
                 st.error(f"GitHub Sync Failed ({put_res.status_code}): {put_res.json().get('message')}")
         except Exception as err:
@@ -1005,7 +1001,9 @@ def load_cases_from_disk():
 
     return loaded_data
 
-# --- SESSION STATE INITIALIZATION ---
+# ==============================================================================
+# 5. SESSION STATE INITIALIZATION
+# ==============================================================================
 if "ccid" not in st.session_state:
     st.session_state.ccid = None
 if "is_admin" not in st.session_state:
@@ -1034,7 +1032,9 @@ if "tx_mobility" not in st.session_state:
 if "tx_strength" not in st.session_state:
     st.session_state.tx_strength = ""
 
-# --- HELPER FUNCTIONS ---
+# ==============================================================================
+# 6. HELPER FUNCTIONS
+# ==============================================================================
 def get_forthcomingness_instruction(level):
     level = int(level)
     if level == 1:
@@ -1093,7 +1093,9 @@ def match_objective_query(query_text, case_obj_data):
                 
         return query_text.strip(), f"Evaluation of '{query_text.strip()}': No localized or specific pathological findings reproduced."
 
-# --- STAGE 1: CCID SECURITY GATE ---
+# ==============================================================================
+# 7. STAGE 1: CCID SECURITY GATE
+# ==============================================================================
 if not st.session_state.ccid:
     st.title("🏥 MSK Clinical Assessment Simulator")
     st.write("Enter your CCID badge number to start your clinical simulation.")
@@ -1106,7 +1108,9 @@ if not st.session_state.ccid:
             st.warning("A valid CCID sequence is mandatory.")
     st.stop()
 
-# --- STAGE 2: NAVIGATION & SIDEBAR ---
+# ==============================================================================
+# 8. STAGE 2: NAVIGATION & SIDEBAR
+# ==============================================================================
 st.sidebar.title("🩺 Control Center")
 st.sidebar.markdown(f"**Active User:** `{st.session_state.ccid}`")
 
@@ -1147,7 +1151,9 @@ if st.sidebar.button("Terminate Session"):
     st.session_state.tx_strength = ""
     st.rerun()
 
-# --- STAGE 3: ADMIN CASE EDITOR ---
+# ==============================================================================
+# 9. STAGE 3: ADMIN CASE EDITOR
+# ==============================================================================
 if role == "Admin/Instructor Editor":
     st.title("🛠️ Admin Case Management Matrix")
     
@@ -1233,7 +1239,9 @@ if role == "Admin/Instructor Editor":
             })
             save_cases_to_disk(st.session_state.case_library)
 
-# --- STAGE 4: STUDENT 3-PHASE CLINICAL SIMULATOR ---
+# ==============================================================================
+# 10. STAGE 4: STUDENT 3-PHASE CLINICAL SIMULATOR
+# ==============================================================================
 else:
     st.title("🎓 Interactive 3-Phase Clinical Assessment")
     
@@ -1286,9 +1294,9 @@ else:
     st.progress(progress_val, text=f"**Current Status:** {phase_names[st.session_state.encounter_phase]}")
     st.markdown("---")
 
-    # ==========================================
+    # --------------------------------------------------------------------------
     # PHASE 1: SUBJECTIVE HISTORY
-    # ==========================================
+    # --------------------------------------------------------------------------
     if st.session_state.encounter_phase == 1:
         st.subheader("🗣️ Phase 1: Subjective History Taking")
         
@@ -1346,9 +1354,9 @@ else:
             else:
                 open_phase1_dialog()
 
-    # ==========================================
+    # --------------------------------------------------------------------------
     # PHASE 2: OBJECTIVE PHYSICAL EXAM
-    # ==========================================
+    # --------------------------------------------------------------------------
     elif st.session_state.encounter_phase == 2:
         st.subheader("🔬 Phase 2: Objective Physical Examination")
         st.write("Type what physical exam procedures or evaluations you want to perform.")
@@ -1394,9 +1402,9 @@ else:
                 st.session_state.encounter_phase = 3
                 st.rerun()
 
-    # ==========================================
-    # PHASE 3: TREATMENT & MANAGEMENT
-    # ==========================================
+    # --------------------------------------------------------------------------
+    # PHASE 3: TREATMENT & MANAGEMENT PLAN
+    # --------------------------------------------------------------------------
     elif st.session_state.encounter_phase >= 3:
         st.subheader("💊 Phase 3: Treatment & Management Plan")
         st.write("Synthesize your subjective and objective findings to formulate your final diagnosis and management strategy.")
@@ -1447,9 +1455,9 @@ else:
                 st.markdown("**Strength:**")
                 st.info(st.session_state.tx_strength)
 
-    # ==========================================
-    # STAGE 5: FULL 3-PHASE TRANSCRIPT EXPORT
-    # ==========================================
+    # ==============================================================================
+    # 11. STAGE 5: FULL 3-PHASE TRANSCRIPT EXPORT
+    # ==============================================================================
     st.sidebar.markdown("---")
     st.sidebar.subheader("📄 Submission Records")
     if st.sidebar.button("Compile Full 3-Phase Transcript"):
